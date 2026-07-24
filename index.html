@@ -52,7 +52,7 @@ button,.select,input,textarea{font:inherit}.btn{border:1px solid var(--border);b
     <button class="btn" onclick="moveWeek(-1)">‹</button><button class="btn" onclick="goToday()">Hoje</button><button class="btn" onclick="moveWeek(1)">›</button>
     <select id="viewSelect" class="select" onchange="setView(this.value)"><option value="month">Mês</option><option value="week">Semana</option><option value="list">Lista</option></select>
     <div class="spacer"></div>
-    <select id="categoryFilter" class="select" onchange="render()"><option value="">Todas as categorias</option><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select>
+    <select id="categoryFilter" class="select" onchange="render()"><option value="">Todas as categorias</option><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select><select id="scopeFilter" class="select" onchange="render()"><option value="">Setor e Campo</option><option>Setor</option><option>Campo</option></select>
     <select id="locationFilter" class="select" onchange="render()"><option value="">Todas as congregações</option></select>
     <input id="search" type="search" placeholder="🔍 Buscar evento..." oninput="render()">
   </div>
