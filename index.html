@@ -121,7 +121,7 @@ function renderMonth(){
     let ev=filtered().filter(e=>e.date===date);
     html+=`<div class="month-cell ${outside?'outside':''} ${today?'month-today':''}" onclick="openModal(null,'${date}')">
       <div class="day-number">${d.getDate()}</div>
-      <div class="month-events">${ev.slice(0,4).map(e=>`<div class="month-event ${colors[e.category]}" onclick="event.stopPropagation();openModal('${e.id}')"><b>${escapeHtml(e.time)}</b> ${(e.scope||'Setor')==='Campo'?'[C] ':''}${escapeHtml(e.title)}</div>`).join('')}
+      <div class="month-events">${ev.slice(0,4).map(e=>`<div class="month-event ${colors[e.category]} ${(e.scope||'Setor')==='Campo'?'s-campo':'s-setor'}" onclick="event.stopPropagation();openModal('${e.id}')"><b>${escapeHtml(e.time)}</b> ${(e.scope||'Setor')==='Campo'?'[C] ':''}${escapeHtml(e.title)}</div>`).join('')}
       ${ev.length>4?`<div class="more-events">+${ev.length-4} mais</div>`:''}</div>
     </div>`;
   }
