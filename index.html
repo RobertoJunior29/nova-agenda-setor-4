@@ -354,7 +354,7 @@ function aplicarTema(t){
  if(t==='dark')document.body.setAttribute('data-tema','dark');
  else document.body.removeAttribute('data-tema');
  const b=document.getElementById('btnTema');
- if(b)b.textContent=(t==='dark')?'☀ Claro':'🌙 Escuro';
+ if(b)b.textContent=(t==='dark')?'☀':'🌙';b.title=(t==='dark')?'Modo claro':'Modo escuro';
 }
 function alternarTema(){
  const escuro=document.body.getAttribute('data-tema')==='dark';
