@@ -125,7 +125,7 @@ body[data-tema="dark"] [data-tip]::after{background:#2e3d47}
     <div class="spacer"></div>
     <select id="categoryFilter" class="select" onchange="render()"><option value="">Todas as categorias</option><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select><select id="scopeFilter" class="select" onchange="render()"><option value="">Setor e Campo</option><option>Setor</option><option>Campo</option></select>
     <select id="locationFilter" class="select" onchange="render()"><option value="">Todas as congregações</option></select>
-    <input id="search" type="search" placeholder="🔍 Buscar evento..." oninput="render()"><button class="btn" style="margin-left:8px" onclick="printPDF()">⬇</button><button class="btn" style="margin-left:8px" id="btnTema" onclick="alternarTema()">🌙</button>
+    <input id="search" type="search" placeholder="🔍 Buscar evento..." oninput="render()"><button class="btn" style="margin-left:8px" onclick="printPDF()" data-tip="Baixar PDF" aria-label="Baixar PDF">⬇</button><button class="btn" style="margin-left:8px" id="btnTema" onclick="alternarTema()">🌙</button>
   </div>
   <section id="calendar" class="calendar-card"></section>
   <section id="list" class="list-view"></section>
