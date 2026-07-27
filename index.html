@@ -234,7 +234,7 @@ function gerarPDF(){
  const doc=new jsPDF({unit:'mm',format:'a4'});
  const M=15,FIM=278;let y=0;
  function cab(){
- doc.setFillColor(255,255,255);doc.rect(0,0,210,24,'F');doc.setDrawColor(11,79,108);doc.setLineWidth(0.8);doc.line(M,24,195,24);doc.setLineWidth(0.2);
+ doc.setFillColor(255,255,255);doc.rect(0,0,210,53,'F');doc.setDrawColor(11,79,108);doc.setLineWidth(0.8);doc.line(M,53,195,53);doc.setLineWidth(0.2);
  try{
   const img=document.querySelector('.brand img');
   if(img&&img.src){
