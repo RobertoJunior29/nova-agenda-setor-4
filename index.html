@@ -291,6 +291,23 @@ function logoPDF(){
   return {data:c.toDataURL('image/jpeg',0.92),w:c.width,h:c.height};
  }catch(e){console.log('Erro na logo:',e);return null}
 }
+function compartilharAgenda(){
+ if(!events.length){toast('Nenhum evento para compartilhar.');return}
+ const pa=document.getElementById('printArea'); if(pa)pa.innerHTML='';
+ let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+ html=html.replace(/<script>window\.AGENDA_EMBUTIDA=[\s\S]*?<\/script>/,'');
+ html=html.replace('<head>','<head><script>window.AGENDA_EMBUTIDA='+JSON.stringify(events)+';<\/script>');
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([html],{type:'text/html;charset=utf-8'}));
+ a.download='Agenda-IEADESGA-compartilhada.html';
+ a.click();
+ toast('Arquivo gerado com '+events.length+' evento(s)!');
+}
+if(window.AGENDA_EMBUTIDA&&Array.isArray(window.AGENDA_EMBUTIDA)){
+ events.length=0;
+ window.AGENDA_EMBUTIDA.forEach(e=>events.push(e));
+ render();
+}
 </script>
 </body>
 </html>
