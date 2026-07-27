@@ -138,7 +138,7 @@ function renderMonth(){
   let cal=document.getElementById('calendar');
   let y=currentDate.getFullYear(), m=currentDate.getMonth();
   let first=new Date(y,m,1), last=new Date(y,m+1,0);
-  let start=new Date(first); start.setDate(first.getDate()-(first.getDay()===0?6:first.getDay()-1));
+  let start=new Date(first); start.setDate(first.getDate()-first.getDay());
   let end=new Date(last); end.setDate(last.getDate()+(7-(last.getDay()===0?7:last.getDay())));
   let days=[]; for(let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) days.push(new Date(d));
   let monthName=currentDate.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
