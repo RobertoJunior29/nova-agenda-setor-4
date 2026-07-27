@@ -240,7 +240,7 @@ function gerarPDF(){
   if(img&&img.src){
    const p=doc.getImageProperties(img.src);
    const h=15,w=h*(p.width/p.height);
-   doc.addImage(img.src,'PNG',77.5,10,55,30)
+   doc.addImage(img.src,'PNG',195-w,3.5,w,h)
   }
  }catch(err){}
  doc.setTextColor(11,79,108);doc.setFont('helvetica','bold');doc.setFontSize(14);
