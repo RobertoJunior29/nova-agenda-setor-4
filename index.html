@@ -285,7 +285,7 @@ function logoPDF(){
   const c=document.createElement('canvas');
   c.width=img.naturalWidth;c.height=img.naturalHeight;
   const ctx=c.getContext('2d');
-  ctx.fillStyle='#0b4f6c';
+  ctx.fillStyle='#ffffff';
   ctx.fillRect(0,0,c.width,c.height);
   ctx.drawImage(img,0,0);
   return {data:c.toDataURL('image/jpeg',0.92),w:c.width,h:c.height};
