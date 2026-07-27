@@ -224,7 +224,20 @@ function gerarPDF(){
  const {jsPDF}=window.jspdf;
  const doc=new jsPDF({unit:'mm',format:'a4'});
  const M=15,FIM=278;let y=0;
- function cab(){doc.setFillColor(11,79,108);doc.rect(0,0,210,20,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Agenda anual IEADESGA',M,13);doc.setTextColor(0,0,0);y=30}
+ function cab(){
+ doc.setFillColor(11,79,108);doc.rect(0,0,210,22,'F');
+ try{
+  const img=document.querySelector('.brand img');
+  if(img&&img.src){
+   const p=doc.getImageProperties(img.src);
+   const h=15,w=h*(p.width/p.height);
+   doc.addImage(img.src,'PNG',195-w,3.5,w,h);
+  }
+ }catch(err){}
+ doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(14);
+ doc.text('Agenda anual IEADESGA',M,14);
+ doc.setTextColor(0,0,0);y=32;
+}
  cab();
  const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
  const f=[cat,esc,loc,q?'"'+q+'"':''].filter(Boolean).join(' - ');
