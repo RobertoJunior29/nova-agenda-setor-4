@@ -122,7 +122,7 @@ const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const fmt=d=>d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
 function save(){localStorage.setItem(KEY,JSON.stringify(events))}
 function toast(t){let e=document.getElementById('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
-function startOfWeek(d){let x=new Date(d);let day=x.getDay();x.setDate(x.getDate()-(day===0?6:day-1));x.setHours(0,0,0,0);return x}
+function startOfWeek(d){let x=new Date(d);let day=x.getDay();x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x}
 function moveWeek(n){currentDate.setDate(currentDate.getDate()+n*7);render()}
 function goToday(){currentDate=new Date();render()}
 function setView(v,btn){document.getElementById('viewSelect').value=v;document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('calendar').style.display=v==='list'?'none':'block';document.getElementById('list').style.display=v==='list'?'block':'none';render()}
