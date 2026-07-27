@@ -185,7 +185,7 @@ async function printPDF(){
  const {jsPDF}=window.jspdf;
  const doc=new jsPDF({unit:'mm',format:'a4'});
  const M=15,FIM=278;let y=0;
- function cabecalho(){doc.setFillColor(11,79,108);doc.rect(0,0,210,20,'F');doc.setTextColor(11,79,108);;doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Agenda anual IEADESGA',M,13);doc.setTextColor(0,0,0);y=30}
+ function cabecalho(){doc.setFillColor(11,79,108);doc.rect(0,0,210,20,'F');doc.setTextColor(11,79,108);;doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Agenda anual IEADESGA',M,13);doc.setTextColor(0,0,0);y=62}
  cabecalho();
  const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
  const f=[cat,esc,loc,q?'"'+q+'"':''].filter(Boolean).join(' · ');
