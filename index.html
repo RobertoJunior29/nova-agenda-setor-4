@@ -336,6 +336,19 @@ if(window.AGENDA_EMBUTIDA&&Array.isArray(window.AGENDA_EMBUTIDA)){
  window.AGENDA_EMBUTIDA.forEach(e=>events.push(e));
  render();
 }
+function aplicarTema(t){
+ if(t==='dark')document.body.setAttribute('data-tema','dark');
+ else document.body.removeAttribute('data-tema');
+ const b=document.getElementById('btnTema');
+ if(b)b.textContent=(t==='dark')?'☀ Claro':'🌙 Escuro';
+}
+function alternarTema(){
+ const escuro=document.body.getAttribute('data-tema')==='dark';
+ const novo=escuro?'claro':'dark';
+ aplicarTema(novo);
+ try{localStorage.setItem('tema',novo)}catch(e){}
+}
+try{aplicarTema(localStorage.getItem('tema')||'claro')}catch(e){}
 </script>
 </body>
 </html>
