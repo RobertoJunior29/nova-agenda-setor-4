@@ -207,6 +207,55 @@ async function printPDF(){
  });
  doc.save('Agenda-IEADESGA-'+new Date().toISOString().slice(0,10)+'.pdf');
  toast('PDF salvo na pasta Downloads!');
-}</script>
+}
+function printPDF(){
+ const arr=filtered();
+ if(!arr.length){toast('Nenhum evento para exportar.');return}
+ toast('Gerando PDF...');
+ if(window.jspdf){gerarPDF();return}
+ const s=document.createElement('script');
+ s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+ s.onload=function(){gerarPDF()};
+ s.onerror=function(){toast('Sem internet - abrindo impressao');if(typeof imprimirPDF==='function')imprimirPDF();else window.print()};
+ document.head.appendChild(s);
+}
+function gerarPDF(){
+ const arr=filtered();
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF({unit:'mm',format:'a4'});
+ const M=15,FIM=278;let y=0;
+ function cab(){doc.setFillColor(11,79,108);doc.rect(0,0,210,20,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Agenda anual IEADESGA',M,13);doc.setTextColor(0,0,0);y=30}
+ cab();
+ const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
+ const f=[cat,esc,loc,q?'"'+q+'"':''].filter(Boolean).join(' - ');
+ doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
+ doc.text(arr.length+' evento(s)'+(f?'  |  Filtros: '+f:'')+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),M,y);
+ y+=8;
+ const g={};arr.forEach(e=>{(g[e.date]=g[e.date]||[]).push(e)});
+ Object.keys(g).sort().forEach(dia=>{
+  if(y>FIM-20){doc.addPage();cab()}
+  const d=new Date(dia+'T12:00');
+  let nome=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  nome=nome.charAt(0).toUpperCase()+nome.slice(1);
+  doc.setFillColor(240,244,243);doc.rect(M,y-4,180,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(11,79,108);
+  doc.text(nome,M+2,y+1);y+=10;
+  g[dia].forEach(e=>{
+   if(y>FIM){doc.addPage();cab()}
+   doc.setTextColor(0);doc.setFont('helvetica','bold');doc.setFontSize(9.5);
+   doc.text(e.time,M+2,y);
+   const t=doc.splitTextToSize(e.title,140);doc.text(t,M+18,y);y+=t.length*4.5;
+   const meta=[e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).join(' - ');
+   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
+   const m=doc.splitTextToSize(meta,140);doc.text(m,M+18,y);y+=m.length*3.8;
+   if(e.description){const ds=doc.splitTextToSize(e.description,140);doc.text(ds,M+18,y);y+=ds.length*3.8}
+   y+=3;doc.setDrawColor(229);doc.line(M+2,y-1.5,195,y-1.5);
+  });
+  y+=4;
+ });
+ doc.save('Agenda-IEADESGA-'+new Date().toISOString().slice(0,10)+'.pdf');
+ toast('PDF salvo na pasta Downloads!');
+}
+</script>
 </body>
 </html>
