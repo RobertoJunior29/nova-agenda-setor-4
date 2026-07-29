@@ -1,4 +1,4 @@
-/* Sincronizacao na nuvem - IEADESGA - v19 */
+/* Sincronizacao na nuvem - IEADESGA - v20 */
 (function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}\n#telaConfig .cf-card{max-width:700px}\n#telaConfig .cf-quem{min-width:130px}\n#telaConfig select{max-width:130px}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaSenha{position:fixed;inset:0;z-index:215;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaSenha .lg-card{background:#fff;color:#1f2933;width:100%;max-width:330px;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}\n#telaSenha h3{margin:0 0 2px;font-size:16px;color:#0b4f6c}\n#telaSenha .lg-sub{margin:0 0 16px;font-size:11px;color:#6b7280;word-break:break-all}\n#telaSenha label{display:block;text-align:left;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px}\n#telaSenha input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaSenha input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaSenha .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;text-align:left;margin:-6px 0 8px}\n#telaSenha .lg-acoes{display:flex;justify-content:space-between;align-items:center}\nbody[data-tema=\"dark\"] #telaSenha .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaSenha h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaSenha input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaSenha .lg-erro{color:#ff8a80}\nbody.somente-leitura #telaSenha .btn{display:inline-block!important}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
@@ -377,16 +377,33 @@ function listaCongregacoes(){
  return fora;
 }
 
-function opcoesCongr(setor,atual){
+function opcoesSetor(papel,atual){
  atual=atual||'';
- let lista;
- if(setor&&CONGREGACOES.length){
+ const vazio=(papel==='secretario')?'\u2013 selecione o setor':'\u2013 todos do campo';
+ let html='<option value=""'+(atual===''?' selected':'')+'>'+vazio+'</option>';
+ SETORES.forEach(function(x){
+  if(!x)return;
+  html+='<option value="'+x+'"'+(atual===x?' selected':'')+'>'+x+'</option>';
+ });
+ return html;
+}
+
+function opcoesCongr(papel,setor,atual){
+ atual=atual||'';
+ const todas=CONGREGACOES.map(function(c){return c.nome});
+ let lista, vazio;
+ if(papel==='admin'){
+  lista=todas;
+  vazio='\u2013 todas do campo';
+ }else if(!setor){
+  lista=[];
+  vazio='\u2013 selecione o setor primeiro';
+ }else{
   lista=CONGREGACOES.filter(function(c){return c.setor===setor})
                     .map(function(c){return c.nome});
- }else{
-  lista=listaCongregacoes().filter(function(x){return x!==''});
+  vazio='\u2013 todas do setor';
  }
- let html='<option value=""'+(atual===''?' selected':'')+'>\u2013 todas do setor</option>';
+ let html='<option value=""'+(atual===''?' selected':'')+'>'+vazio+'</option>';
  lista.forEach(function(n){
   html+='<option value="'+n+'"'+(n===atual?' selected':'')+'>'+n+'</option>';
  });
@@ -433,10 +450,8 @@ async function carregarListaPerfis(){
   const opP=PAPEIS.map(function(x){
    return '<option value="'+x+'"'+(p.papel===x?' selected':'')+'>'+rotuloPapel(x)+'</option>';
   }).join('');
-  const opS=SETORES.map(function(x){
-   return '<option value="'+x+'"'+((p.setor||'')===x?' selected':'')+'>'+(x||'\u2013')+'</option>';
-  }).join('');
-  const opC=opcoesCongr(p.setor,p.congregacao);
+  const opS=opcoesSetor(p.papel,p.setor);
+  const opC=opcoesCongr(p.papel,p.setor,p.congregacao);
   li.innerHTML=
    '<div class="cf-quem"><input class="cf-nome" type="text" value="'+(p.nome||'').replace(/"/g,'&quot;')+'" placeholder="Nome completo">'+
    '<span>'+(p.email||'')+'</span></div>'+
@@ -444,9 +459,15 @@ async function carregarListaPerfis(){
    '<select class="cf-setor">'+opS+'</select>'+
    '<select class="cf-congr">'+opC+'</select>'+
    '<button type="button" class="chip cf-salvar">Salvar</button>';
-  const selSet=li.querySelector('.cf-setor'), selCon=li.querySelector('.cf-congr');
+  const selPap=li.querySelector('.cf-papel'),
+        selSet=li.querySelector('.cf-setor'),
+        selCon=li.querySelector('.cf-congr');
   selSet.addEventListener('change',function(){
-   selCon.innerHTML=opcoesCongr(selSet.value,selCon.value);
+   selCon.innerHTML=opcoesCongr(selPap.value,selSet.value,selCon.value);
+  });
+  selPap.addEventListener('change',function(){
+   selSet.innerHTML=opcoesSetor(selPap.value,selSet.value);
+   selCon.innerHTML=opcoesCongr(selPap.value,selSet.value,selCon.value);
   });
   li.querySelector('.cf-salvar').onclick=async function(ev){
    const bt=ev.currentTarget;
