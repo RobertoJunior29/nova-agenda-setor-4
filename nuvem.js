@@ -1,11 +1,27 @@
-/* Sincronizacao na nuvem - IEADESGA */
-(function(){var st=document.createElement('style');st.textContent="#barraLogin{margin:auto 0 0;padding:10px 12px;border-top:1px solid #e2e8e6;display:flex;flex-direction:column;gap:6px;align-items:center}\n#barraLogin .bl-email{font-size:10px;color:#6b7280;text-align:center;word-break:break-all;line-height:1.3}\nbody[data-tema=\"dark\"] #barraLogin{border-top-color:#24313a}\nbody[data-tema=\"dark\"] #barraLogin .bl-email{color:#93a4ad}\n.sidebar{display:flex;flex-direction:column}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}";document.head.appendChild(st);})();
+/* Sincronizacao na nuvem - IEADESGA - v2 */
+(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
 const SUPA_URL='https://sblvlwzhwtlgbbabhwhj.supabase.co';
 const SUPA_KEY='sb_publishable_Obrj650fuqadUh4sQjWliA_U0LPE6zG';
 
-let sb=null, usuario=null, pausado=false, idsRemotos=new Set();
+let sb=null, usuario=null, perfil=null, pausado=false, idsRemotos=new Set();
+
+const NOMES_PAPEL={admin:'Administrador',secretario:'Secretario do Setor',leitor:'Leitor'};
+
+async function carregarPerfil(){
+ perfil=null;
+ if(!sb||!usuario)return;
+ const r=await sb.from('perfis').select('nome,papel,setor').eq('user_id',usuario.id).maybeSingle();
+ if(!r.error&&r.data)perfil=r.data;
+}
+
+function textoFuncao(){
+ if(!perfil)return 'Sem perfil definido';
+ const base=NOMES_PAPEL[perfil.papel]||perfil.papel;
+ if(perfil.papel==='secretario'&&perfil.setor)return 'Secretario - '+perfil.setor;
+ return base;
+}
 
 function carregarSDK(){return new Promise(function(ok,err){
  if(window.supabase&&window.supabase.createClient){ok();return}
@@ -80,11 +96,13 @@ function atualizarBarraLogin(){
  const box=document.getElementById('barraLogin');
  if(!box)return;
  if(usuario){
-  box.innerHTML='<div class="bl-email">'+usuario.email+'</div>'+
+  const nome=(perfil&&perfil.nome)?perfil.nome:usuario.email;
+  box.innerHTML='<div class="bl-quem"><span class="bl-nome">'+nome+'</span>'+
+   '<span class="bl-func">'+textoFuncao()+'</span></div>'+
    '<button type="button" class="chip" onclick="sairNuvem()">Sair</button>';
  }else{
-  box.innerHTML='<div class="bl-email">Somente leitura</div>'+
-   '<button type="button" class="chip on" onclick="entrarNuvem()">Entrar para editar</button>';
+  box.innerHTML='<div class="bl-quem"><span class="bl-func">Somente leitura</span></div>'+
+   '<button type="button" class="chip on" onclick="entrarNuvem()">Entrar</button>';
  }
  document.body.classList.toggle('somente-leitura',!usuario);
 }
@@ -97,7 +115,9 @@ async function entrarNuvem(){
  if(!se)return;
  const r=await sb.auth.signInWithPassword({email:em.trim(),password:se});
  if(r.error){toast('E-mail ou senha incorretos');return}
- toast('Conectado!');
+ await carregarPerfil();
+ atualizarBarraLogin();
+ toast('Bem-vindo, '+((perfil&&perfil.nome)?perfil.nome:'')+'!');
  baixarNuvem();
 }
 
@@ -113,10 +133,12 @@ async function iniciarNuvem(){
  sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
  const s=await sb.auth.getSession();
  usuario=(s.data&&s.data.session)?s.data.session.user:null;
- sb.auth.onAuthStateChange(function(_ev,sess){
+ sb.auth.onAuthStateChange(async function(_ev,sess){
   usuario=sess?sess.user:null;
+  await carregarPerfil();
   atualizarBarraLogin();
  });
+ await carregarPerfil();
  montarBarraLogin();
  instalarGancho();
  await baixarNuvem();
