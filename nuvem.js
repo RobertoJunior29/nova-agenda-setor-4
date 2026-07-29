@@ -1,18 +1,19 @@
-/* Sincronizacao na nuvem - IEADESGA - v12 */
-(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}";document.head.appendChild(st);})();
+/* Sincronizacao na nuvem - IEADESGA - v14 */
+(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}\n#telaConfig .cf-card{max-width:700px}\n#telaConfig .cf-quem{min-width:130px}\n#telaConfig select{max-width:130px}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
 const SUPA_URL='https://sblvlwzhwtlgbbabhwhj.supabase.co';
 const SUPA_KEY='sb_publishable_Obrj650fuqadUh4sQjWliA_U0LPE6zG';
 
 let sb=null, usuario=null, perfil=null, pausado=false, idsRemotos=new Set();
+let ultimoEstado={}, donos={}, chaveEventos=null, _origSet=null;
 
 const NOMES_PAPEL={admin:'Administrador',secretario:'Secret\u00e1rio do Setor',leitor:'Leitor'};
 
 async function carregarPerfil(){
  perfil=null;
  if(!sb||!usuario)return;
- const r=await sb.from('perfis').select('nome,papel,setor').eq('user_id',usuario.id).maybeSingle();
+ const r=await sb.from('perfis').select('nome,papel,setor,congregacao').eq('user_id',usuario.id).maybeSingle();
  if(!r.error&&r.data)perfil=r.data;
 }
 
@@ -34,16 +35,22 @@ function carregarSDK(){return new Promise(function(ok,err){
 
 async function baixarNuvem(){
  if(!sb||pausado)return;
- const r=await sb.from('eventos').select('id,dados');
+ const r=await sb.from('eventos').select('id,dados,criado_por');
  if(r.error){console.log('erro ao baixar:',r.error.message);return}
+ donos={};
+ r.data.forEach(function(x){donos[String(x.id)]=x.criado_por});
  idsRemotos=new Set(r.data.map(function(x){return String(x.id)}));
  const novos=r.data.map(function(x){
   const e=Object.assign({},x.dados);e.id=x.id;return e;
  });
- if(JSON.stringify(novos)===JSON.stringify(events))return;
+ const iguais=JSON.stringify(novos)===JSON.stringify(events);
+ ultimoEstado={};
+ novos.forEach(function(e){ultimoEstado[String(e.id)]=JSON.stringify(e)});
+ if(iguais)return;
  pausado=true;
  events.length=0;
  novos.forEach(function(e){events.push(e)});
+ gravarLocal();
  pausado=false;
  render();
  if(typeof montarTodosChips==='function')montarTodosChips();
@@ -51,30 +58,50 @@ async function baixarNuvem(){
 
 async function enviarNuvem(){
  if(!sb||!usuario||pausado)return;
- const linhas=events.map(function(e){
-  return {id:String(e.id),dados:e,atualizado_em:new Date().toISOString()};
+ const atuais={}, mudados=[];
+ events.forEach(function(e){
+  const k=String(e.id), s=JSON.stringify(e);
+  atuais[k]=s;
+  if(ultimoEstado[k]!==s)mudados.push({id:k,dados:e,atualizado_em:new Date().toISOString()});
  });
- if(linhas.length){
-  const r=await sb.from('eventos').upsert(linhas);
-  if(r.error){toast('Sem permiss\u00e3o para salvar este evento');return}
+ if(mudados.length){
+  const r=await sb.from('eventos').upsert(mudados);
+  if(r.error){avisarRecusa(r.error.message);await baixarNuvem();return}
  }
- const locais=new Set(linhas.map(function(l){return l.id}));
  const apagar=[];
- idsRemotos.forEach(function(id){if(!locais.has(id))apagar.push(id)});
+ Object.keys(ultimoEstado).forEach(function(k){if(!(k in atuais))apagar.push(k)});
  if(apagar.length){
   const d=await sb.from('eventos').delete().in('id',apagar);
-  if(d.error){toast('Sem permiss\u00e3o para excluir');return}
+  if(d.error){avisarRecusa(d.error.message);await baixarNuvem();return}
  }
- idsRemotos=locais;
+ ultimoEstado=atuais;
+ idsRemotos=new Set(Object.keys(atuais));
+}
+
+function avisarRecusa(msg){
+ if(!perfil){toast('Entre para editar a agenda');return}
+ if(perfil.papel==='secretario'){
+  toast('Voc\u00ea s\u00f3 pode alterar eventos criados por voc\u00ea, do seu setor e congrega\u00e7\u00e3o.');
+ }else{
+  toast('Altera\u00e7\u00e3o recusada pelo servidor');
+ }
+ console.log('recusa do banco:',msg);
+}
+
+function gravarLocal(){
+ try{
+  if(chaveEventos&&_origSet)_origSet(chaveEventos,JSON.stringify(events));
+ }catch(e){}
 }
 
 function instalarGancho(){
- const orig=localStorage.setItem.bind(localStorage);
+ _origSet=localStorage.setItem.bind(localStorage);
  localStorage.setItem=function(k,v){
-  orig(k,v);
+  _origSet(k,v);
   try{
    const p=JSON.parse(v);
    if(Array.isArray(p)&&p.length&&p[0]&&p[0].date&&p[0].title){
+    chaveEventos=k;
     clearTimeout(window._tmrNuvem);
     window._tmrNuvem=setTimeout(enviarNuvem,300);
    }
@@ -206,19 +233,49 @@ function acharModal(){
  return document.getElementById('modalBackdrop')||document.querySelector('.modal-backdrop')||document.querySelector('.modal');
 }
 
-function travarModalLeitura(){
+function travarModalLeitura(id){
  const m=acharModal();
  if(!m)return;
- const travar=!usuario;
+ let travar=false, motivo='';
+ if(!usuario){travar=true}
+ else if(perfil&&perfil.papel==='admin'){travar=false}
+ else if(perfil&&perfil.papel==='secretario'){
+  if(id&&donos[String(id)]&&donos[String(id)]!==usuario.id){travar=true;motivo='outro'}
+ }else{travar=true}
  m.querySelectorAll('button').forEach(function(b){
   const t=(b.textContent||'').toLowerCase();
   if(/excluir|apagar|remover|deletar|salvar|criar|adicionar/.test(t)){
    b.style.display=travar?'none':'';
   }
  });
- m.querySelectorAll('input,select,textarea').forEach(function(c){
-  c.disabled=travar;
- });
+ m.querySelectorAll('input,select,textarea').forEach(function(c){c.disabled=travar});
+ if(!travar&&perfil&&perfil.papel==='secretario')fixarEscopo(m,!id);
+}
+
+function fixarEscopo(m,novo){
+ const cSetor=document.getElementById('fSetor');
+ if(cSetor&&perfil.setor){
+  if(novo)cSetor.value=perfil.setor;
+  cSetor.disabled=true;
+ }
+ const cLocal=acharCampoCongregacao(m);
+ if(cLocal&&perfil.congregacao){
+  if(novo)cLocal.value=perfil.congregacao;
+  cLocal.disabled=true;
+ }
+}
+
+function acharCampoCongregacao(m){
+ const direto=document.getElementById('fLocation')||document.getElementById('fLocal');
+ if(direto)return direto;
+ const campos=m.querySelectorAll('.field');
+ for(let i=0;i<campos.length;i++){
+  const lb=campos[i].querySelector('label');
+  if(lb&&/congrega/i.test(lb.textContent||'')){
+   return campos[i].querySelector('input,select');
+  }
+ }
+ return null;
 }
 
 try{
@@ -227,7 +284,7 @@ try{
   openModal=function(id){
    if(!usuario&&!id){toast('Entre para criar eventos');return}
    _abrir.apply(null,arguments);
-   setTimeout(travarModalLeitura,40);
+   setTimeout(function(){travarModalLeitura(id)},40);
   };
  }
 }catch(e){console.log('nao foi possivel proteger o modal:',e.message)}
@@ -290,6 +347,17 @@ async function fazerCadastro(){
 const PAPEIS=['admin','secretario','leitor'];
 const SETORES=['','Sede','Setor 1','Setor 2','Setor 3','Setor 4','Setor 5'];
 
+function listaCongregacoes(){
+ const sel=document.getElementById('locationFilter');
+ const fora=[''];
+ if(!sel)return fora;
+ for(let i=0;i<sel.options.length;i++){
+  const v=sel.options[i].value;
+  if(v&&fora.indexOf(v)<0)fora.push(v);
+ }
+ return fora;
+}
+
 function rotuloPapel(x){
  if(x==='admin')return 'Administrador';
  if(x==='secretario')return 'Secret\u00e1rio';
@@ -330,17 +398,22 @@ async function carregarListaPerfis(){
   const opS=SETORES.map(function(x){
    return '<option value="'+x+'"'+((p.setor||'')===x?' selected':'')+'>'+(x||'\u2013')+'</option>';
   }).join('');
+  const opC=listaCongregacoes().map(function(x){
+   return '<option value="'+x+'"'+((p.congregacao||'')===x?' selected':'')+'>'+(x||'\u2013')+'</option>';
+  }).join('');
   li.innerHTML=
    '<div class="cf-quem"><b>'+(p.nome||'(sem nome)')+'</b><span>'+(p.email||'')+'</span></div>'+
    '<select class="cf-papel">'+opP+'</select>'+
    '<select class="cf-setor">'+opS+'</select>'+
+   '<select class="cf-congr">'+opC+'</select>'+
    '<button type="button" class="chip cf-salvar">Salvar</button>';
   li.querySelector('.cf-salvar').onclick=async function(ev){
    const bt=ev.currentTarget;
    const papel=li.querySelector('.cf-papel').value;
    const setor=li.querySelector('.cf-setor').value||null;
+   const congregacao=li.querySelector('.cf-congr').value||null;
    bt.disabled=true;bt.textContent='...';
-   const u=await sb.from('perfis').update({papel:papel,setor:setor}).eq('user_id',p.user_id);
+   const u=await sb.from('perfis').update({papel:papel,setor:setor,congregacao:congregacao}).eq('user_id',p.user_id);
    bt.disabled=false;bt.textContent='Salvar';
    if(u.error){toast('Erro: '+u.error.message);return}
    toast('Acesso atualizado');
