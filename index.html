@@ -127,7 +127,7 @@ body[data-tema="dark"] .logo-dark{display:block;margin:0 auto}
     <button class="btn" onclick="moveWeek(-1)">‹</button><button class="btn" onclick="goToday()">Hoje</button><button class="btn" onclick="moveWeek(1)">›</button>
     <select id="viewSelect" class="select" onchange="setView(this.value)"><option value="month">Mês</option><option value="week">Semana</option><option value="list">Lista</option></select>
     <div class="spacer"></div>
-    <select id="categoryFilter" class="select" onchange="render()"><option value="">Todas as categorias</option><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select><select id="scopeFilter" class="select" onchange="render()"><option value="">Setor e Campo</option><option>Setor</option><option>Campo</option></select>
+    <select id="categoryFilter" class="select" onchange="render()"><option value="">Todas as categorias</option><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select><select id="scopeFilter" class="select" onchange="render()"><option value="">Setor e Campo</option><option>Setor</option><option>Campo</option></select><select id="setorFilter" class="select" onchange="render()"><option value="">Todos os setores</option><option>Sede</option><option>Setor 1</option><option>Setor 2</option><option>Setor 3</option><option>Setor 4</option><option>Setor 5</option></select>
     <select id="locationFilter" class="select" onchange="render()"><option value="">Todas as congregações</option></select>
     <input id="search" type="search" placeholder="🔍 Buscar evento..." oninput="render()"><button class="btn" style="margin-left:8px" onclick="printPDF()" data-tip="Baixar PDF" aria-label="Baixar PDF">⬇</button><button class="btn" style="margin-left:8px" id="btnTema" onclick="alternarTema()">🌙</button>
   </div>
@@ -146,7 +146,7 @@ body[data-tema="dark"] .logo-dark{display:block;margin:0 auto}
       <div class="field"><label>Data *</label><input id="fDate" type="date" required></div>
       <div class="field"><label>Horário *</label><input id="fTime" type="time" required></div>
       <div class="field"><label>Categoria</label><select id="fCategory"><option>Culto / Evento</option><option>Reunião</option><option>Departamento</option><option>Data importante</option></select></div>
-      <div class="field"><label>Âmbito</label><select id="fScope"><option>Setor</option><option>Campo</option></select></div><div class="field"><label>Congregação / Local</label><input id="fLocation" placeholder="Ex.: Monte Hermom"></div>
+      <div class="field"><label>Âmbito</label><select id="fScope"><option>Setor</option><option>Campo</option></select></div><div class="field"><label>Setor / Sede</label><select id="fSetor"><option>Sede</option><option>Setor 1</option><option>Setor 2</option><option>Setor 3</option><option>Setor 4</option><option>Setor 5</option></select></div><div class="field"><label>Congregação / Local</label><input id="fLocation" placeholder="Ex.: Monte Hermom"></div>
       <div class="field"><label>Responsável</label><input id="fResponsible" placeholder="Nome do responsável"></div>
       <div class="field"><label>Recorrência</label><select id="fRepeat"><option value="">Não repetir</option><option value="weekly">Toda semana</option><option value="monthly">Todo mês</option></select></div>
       <div class="field full"><label>Descrição / Observações</label><textarea id="fDescription" placeholder="Informações adicionais..."></textarea></div>
@@ -172,11 +172,11 @@ function startOfWeek(d){let x=new Date(d);let day=x.getDay();x.setDate(x.getDate
 function moveWeek(n){currentDate.setDate(currentDate.getDate()+n*7);render()}
 function goToday(){currentDate=new Date();render()}
 function setView(v,btn){document.getElementById('viewSelect').value=v;document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');document.getElementById('calendar').style.display=v==='list'?'none':'block';document.getElementById('list').style.display=v==='list'?'block':'none';render()}
-function openModal(id=null,date=null){editingId=id;document.getElementById('eventForm').reset();document.getElementById('modalTitle').textContent=id?'Editar evento':'Novo evento';document.getElementById('deleteBtn').style.display=id?'inline-block':'none';let e=events.find(x=>x.id===id);if(e){fTitle.value=e.title;fDate.value=e.date;fTime.value=e.time;fCategory.value=e.category;fScope.value=e.scope||'Setor';fLocation.value=e.location||'';fResponsible.value=e.responsible||'';fRepeat.value=e.repeat||'';fDescription.value=e.description||''}else{fDate.value=date||iso(currentDate);fTime.value='19:00'}document.getElementById('modalBackdrop').style.display='flex'}
+function openModal(id=null,date=null){editingId=id;document.getElementById('eventForm').reset();document.getElementById('modalTitle').textContent=id?'Editar evento':'Novo evento';document.getElementById('deleteBtn').style.display=id?'inline-block':'none';let e=events.find(x=>x.id===id);if(e){fTitle.value=e.title;fDate.value=e.date;fTime.value=e.time;fCategory.value=e.category;fScope.value=e.scope||'Setor';fSetor.value=e.setor||'Sede';fLocation.value=e.location||'';fResponsible.value=e.responsible||'';fRepeat.value=e.repeat||'';fDescription.value=e.description||''}else{fDate.value=date||iso(currentDate);fTime.value='19:00'}document.getElementById('modalBackdrop').style.display='flex'}
 function closeModal(){document.getElementById('modalBackdrop').style.display='none';editingId=null}
-document.getElementById('eventForm').addEventListener('submit',e=>{e.preventDefault();let data={id:editingId||Date.now().toString(),title:fTitle.value.trim(),date:fDate.value,time:fTime.value,category:fCategory.value,scope:fScope.value,location:fLocation.value.trim(),responsible:fResponsible.value.trim(),repeat:fRepeat.value,description:fDescription.value.trim()};if(editingId){events=events.map(x=>x.id===editingId?data:x)}else{events.push(data);if(data.repeat){let base=new Date(data.date+'T12:00');for(let i=1;i<=5;i++){let d=new Date(base);if(data.repeat==='weekly')d.setDate(d.getDate()+i*7);else d.setMonth(d.getMonth()+i);events.push({...data,id:(Date.now()+i).toString(),date:iso(d)})}}}save();closeModal();render();toast(editingId?'Evento atualizado!':'Evento criado!')})
+document.getElementById('eventForm').addEventListener('submit',e=>{e.preventDefault();let data={id:editingId||Date.now().toString(),title:fTitle.value.trim(),date:fDate.value,time:fTime.value,category:fCategory.value,scope:fScope.value,setor:fSetor.value,location:fLocation.value.trim(),responsible:fResponsible.value.trim(),repeat:fRepeat.value,description:fDescription.value.trim()};if(editingId){events=events.map(x=>x.id===editingId?data:x)}else{events.push(data);if(data.repeat){let base=new Date(data.date+'T12:00');for(let i=1;i<=5;i++){let d=new Date(base);if(data.repeat==='weekly')d.setDate(d.getDate()+i*7);else d.setMonth(d.getMonth()+i);events.push({...data,id:(Date.now()+i).toString(),date:iso(d)})}}}save();closeModal();render();toast(editingId?'Evento atualizado!':'Evento criado!')})
 function deleteEvent(){if(!editingId)return;if(confirm('Excluir este evento?')){events=events.filter(x=>x.id!==editingId);save();closeModal();render();toast('Evento excluído!')}}
-function filtered(){let cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,scope=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.toLowerCase();return events.filter(e=>(!cat||e.category===cat)&&(!loc||e.location===loc)&&(!scope||(e.scope||'Setor')===scope)&&(!q||[e.title,e.location,e.responsible,e.description,e.scope].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))}
+function filtered(){let cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,scope=document.getElementById('scopeFilter').value,setor=document.getElementById('setorFilter').value,q=document.getElementById('search').value.toLowerCase();return events.filter(e=>(!cat||e.category===cat)&&(!loc||e.location===loc)&&(!scope||(e.scope||'Setor')===scope)&&(!setor||(e.setor||'Sede')===setor)&&(!q||[e.title,e.location,e.responsible,e.description,e.scope,e.setor].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))}
 function updateLocations(){let s=document.getElementById('locationFilter'),old=s.value;let loc=[...new Set(events.map(e=>e.location).filter(Boolean))].sort();s.innerHTML='<option value="">Todas as congregações</option>'+loc.map(x=>`<option>${escapeHtml(x)}</option>`).join('');s.value=loc.includes(old)?old:''}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function render(){updateLocations();let view=document.getElementById('viewSelect').value;if(view==='list'){renderList();return}if(view==='month'){renderMonth();return}renderWeek()}
@@ -209,7 +209,7 @@ render();
 function imprimirPDF(){
  const arr=filtered();
  if(!arr.length){toast('Nenhum evento para exportar.');return}
- const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,scope=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
+ const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,scope=document.getElementById('scopeFilter').value,setor=document.getElementById('setorFilter').value,q=document.getElementById('search').value.trim();
  const f=[cat,scope,loc,q?'"'+q+'"':''].filter(Boolean).join(' · ');
  const grupos={};
  arr.forEach(e=>{(grupos[e.date]=grupos[e.date]||[]).push(e)});
@@ -219,7 +219,7 @@ function imprimirPDF(){
   const nome=d.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
   html+='<div class="p-day"><h2>'+nome.charAt(0).toUpperCase()+nome.slice(1)+'</h2>';
   grupos[dia].forEach(e=>{
-   const meta=[e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).map(escapeHtml).join(' · ');
+   const meta=[e.setor||'Sede',e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).map(escapeHtml).join(' · ');
    html+='<div class="p-ev"><span class="p-time">'+escapeHtml(e.time)+'</span><span><b>'+escapeHtml(e.title)+'</b><br><span class="p-meta">'+meta+'</span>'+(e.description?'<br><span class="p-meta">'+escapeHtml(e.description)+'</span>':'')+'</span></div>';
   });
   html+='</div>';
@@ -237,8 +237,8 @@ async function printPDF(){
  const M=15,FIM=278;let y=0;
  function cabecalho(){doc.setFillColor(11,79,108);doc.rect(0,0,210,20,'F');doc.setTextColor(11,79,108);;doc.setFont('helvetica','bold');doc.setFontSize(14);doc.text('Agenda anual IEADESGA',M,13);doc.setTextColor(0,0,0);y=62}
  cabecalho();
- const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
- const f=[cat,esc,loc,q?'"'+q+'"':''].filter(Boolean).join(' · ');
+ const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,setorSel=document.getElementById('setorFilter').value,q=document.getElementById('search').value.trim();
+ const f=[cat,esc,setorSel,loc,q?'"'+q+'"':''].filter(Boolean).join(' · ');
  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
  doc.text(arr.length+' evento(s)'+(f?'  |  Filtros: '+f:'')+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),M,y);
  y+=8;
@@ -256,7 +256,7 @@ async function printPDF(){
    doc.setTextColor(0);doc.setFont('helvetica','bold');doc.setFontSize(9.5);
    doc.text(e.time,M+2,y);
    const t=doc.splitTextToSize(e.title,140);doc.text(t,M+18,y);y+=t.length*4.5;
-   const meta=[e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).join(' · ');
+   const meta=[e.setor||'Sede',e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).join(' · ');
    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
    const m=doc.splitTextToSize(meta,140);doc.text(m,M+18,y);y+=m.length*3.8;
    if(e.description){const ds=doc.splitTextToSize(e.description,140);doc.text(ds,M+18,y);y+=ds.length*3.8}
@@ -298,8 +298,8 @@ function gerarPDF(){
  doc.setTextColor(0,0,0);y=62;
 }
  cab();
- const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,q=document.getElementById('search').value.trim();
- const f=[cat,esc,loc,q?'"'+q+'"':''].filter(Boolean).join(' - ');
+ const cat=document.getElementById('categoryFilter').value,loc=document.getElementById('locationFilter').value,esc=document.getElementById('scopeFilter').value,setorSel=document.getElementById('setorFilter').value,q=document.getElementById('search').value.trim();
+ const f=[cat,esc,setorSel,loc,q?'"'+q+'"':''].filter(Boolean).join(' - ');
  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
  doc.text(arr.length+' evento(s)'+(f?'  |  Filtros: '+f:'')+'  |  Gerado em '+new Date().toLocaleDateString('pt-BR'),M,y);
  y+=8;
@@ -317,7 +317,7 @@ function gerarPDF(){
    doc.setTextColor(0);doc.setFont('helvetica','bold');doc.setFontSize(9.5);
    doc.text(e.time,M+2,y);
    const t=doc.splitTextToSize(e.title,140);doc.text(t,M+18,y);y+=t.length*4.5;
-   const meta=[e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).join(' - ');
+   const meta=[e.setor||'Sede',e.scope||'Setor',e.category,e.location,e.responsible?'Resp.: '+e.responsible:''].filter(Boolean).join(' - ');
    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(110);
    const m=doc.splitTextToSize(meta,140);doc.text(m,M+18,y);y+=m.length*3.8;
    if(e.description){const ds=doc.splitTextToSize(e.description,140);doc.text(ds,M+18,y);y+=ds.length*3.8}
