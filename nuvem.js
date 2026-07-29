@@ -1,4 +1,4 @@
-/* Sincronizacao na nuvem - IEADESGA - v15 */
+/* Sincronizacao na nuvem - IEADESGA - v16 */
 (function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}\n#telaConfig .cf-card{max-width:700px}\n#telaConfig .cf-quem{min-width:130px}\n#telaConfig select{max-width:130px}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
@@ -7,6 +7,7 @@ const SUPA_KEY='sb_publishable_Obrj650fuqadUh4sQjWliA_U0LPE6zG';
 
 let sb=null, usuario=null, perfil=null, pausado=false, idsRemotos=new Set();
 let ultimoEstado={}, donos={}, chaveEventos=null, _origSet=null;
+let CONGREGACOES=[];
 
 const NOMES_PAPEL={admin:'Administrador',secretario:'Secret\u00e1rio do Setor',leitor:'Leitor'};
 
@@ -219,6 +220,9 @@ async function iniciarNuvem(){
   atualizarBarraLogin();
  });
  await carregarPerfil();
+ await carregarCongregacoes();
+ injetarFiltroCongregacoes();
+ ligarInjecaoNoRender();
  montarBarraLogin();
  instalarGancho();
  let jaViu=false;
@@ -284,7 +288,11 @@ try{
   openModal=function(id){
    if(!usuario&&!id){toast('Entre para criar eventos');return}
    _abrir.apply(null,arguments);
-   setTimeout(function(){travarModalLeitura(id)},40);
+   setTimeout(function(){
+    const m=acharModal();
+    if(m)prepararCongregacaoModal(m);
+    travarModalLeitura(id);
+   },40);
   };
  }
 }catch(e){console.log('nao foi possivel proteger o modal:',e.message)}
@@ -348,8 +356,10 @@ const PAPEIS=['admin','secretario','leitor'];
 const SETORES=['','Sede','Setor 1','Setor 2','Setor 3','Setor 4','Setor 5'];
 
 function listaCongregacoes(){
- const sel=document.getElementById('locationFilter');
  const fora=[''];
+ CONGREGACOES.forEach(function(c){if(fora.indexOf(c.nome)<0)fora.push(c.nome)});
+ if(fora.length>1)return fora;
+ const sel=document.getElementById('locationFilter');
  if(!sel)return fora;
  for(let i=0;i<sel.options.length;i++){
   const v=sel.options[i].value;
@@ -423,6 +433,81 @@ async function carregarListaPerfis(){
   };
   box.appendChild(li);
  });
+}
+
+
+/* ---------- congregacoes oficiais ---------- */
+async function carregarCongregacoes(){
+ if(!sb)return;
+ const r=await sb.from('congregacoes').select('nome,setor,ordem').order('setor').order('ordem');
+ if(r.error){console.log('congregacoes:',r.error.message);return}
+ CONGREGACOES=r.data||[];
+}
+
+function congregacoesDoSetor(setor){
+ if(!setor)return CONGREGACOES.map(function(c){return c.nome});
+ const f=CONGREGACOES.filter(function(c){return c.setor===setor});
+ return (f.length?f:CONGREGACOES).map(function(c){return c.nome});
+}
+
+function injetarFiltroCongregacoes(){
+ const sel=document.getElementById('locationFilter');
+ if(!sel||!CONGREGACOES.length)return;
+ const atual=sel.value, tem=[];
+ for(let i=0;i<sel.options.length;i++)tem.push(sel.options[i].value);
+ CONGREGACOES.forEach(function(c){
+  if(tem.indexOf(c.nome)<0){
+   const o=document.createElement('option');
+   o.value=c.nome;o.textContent=c.nome;
+   sel.appendChild(o);
+  }
+ });
+ sel.value=atual;
+}
+
+function ligarInjecaoNoRender(){
+ try{
+  if(typeof render!=='function')return;
+  const _r=render;
+  render=function(){
+   _r.apply(null,arguments);
+   injetarFiltroCongregacoes();
+   if(typeof montarTodosChips==='function')montarTodosChips();
+   if(typeof montarChipsSetor==='function')montarChipsSetor();
+  };
+ }catch(e){console.log('nao foi possivel ligar no render:',e.message)}
+}
+
+function prepararCongregacaoModal(m){
+ if(!CONGREGACOES.length)return;
+ const campo=acharCampoCongregacao(m);
+ if(!campo)return;
+ const cSetor=document.getElementById('fSetor');
+ function atualizar(){
+  const setor=cSetor?cSetor.value:'';
+  const lista=congregacoesDoSetor(setor);
+  const atual=campo.value;
+  if(campo.tagName==='SELECT'){
+   let html='<option value=""></option>';
+   lista.forEach(function(n){
+    html+='<option value="'+n+'"'+(n===atual?' selected':'')+'>'+n+'</option>';
+   });
+   if(atual&&lista.indexOf(atual)<0){
+    html+='<option value="'+atual+'" selected>'+atual+'</option>';
+   }
+   campo.innerHTML=html;
+  }else{
+   let dl=document.getElementById('listaCongr');
+   if(!dl){dl=document.createElement('datalist');dl.id='listaCongr';document.body.appendChild(dl)}
+   dl.innerHTML=lista.map(function(n){return '<option value="'+n+'">'}).join('');
+   campo.setAttribute('list','listaCongr');
+  }
+ }
+ atualizar();
+ if(cSetor&&!cSetor._ligadoCongr){
+  cSetor._ligadoCongr=true;
+  cSetor.addEventListener('change',atualizar);
+ }
 }
 
 iniciarNuvem();
