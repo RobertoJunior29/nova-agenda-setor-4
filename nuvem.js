@@ -1,5 +1,5 @@
-/* Sincronizacao na nuvem - IEADESGA - v2 */
-(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}";document.head.appendChild(st);})();
+/* Sincronizacao na nuvem - IEADESGA - v4 */
+(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
 const SUPA_URL='https://sblvlwzhwtlgbbabhwhj.supabase.co';
@@ -7,7 +7,7 @@ const SUPA_KEY='sb_publishable_Obrj650fuqadUh4sQjWliA_U0LPE6zG';
 
 let sb=null, usuario=null, perfil=null, pausado=false, idsRemotos=new Set();
 
-const NOMES_PAPEL={admin:'Administrador',secretario:'Secretario do Setor',leitor:'Leitor'};
+const NOMES_PAPEL={admin:'Administrador',secretario:'Secret\u00e1rio do Setor',leitor:'Leitor'};
 
 async function carregarPerfil(){
  perfil=null;
@@ -19,7 +19,7 @@ async function carregarPerfil(){
 function textoFuncao(){
  if(!perfil)return 'Sem perfil definido';
  const base=NOMES_PAPEL[perfil.papel]||perfil.papel;
- if(perfil.papel==='secretario'&&perfil.setor)return 'Secretario - '+perfil.setor;
+ if(perfil.papel==='secretario'&&perfil.setor)return 'Secret\u00e1rio \u2013 '+perfil.setor;
  return base;
 }
 
@@ -56,14 +56,14 @@ async function enviarNuvem(){
  });
  if(linhas.length){
   const r=await sb.from('eventos').upsert(linhas);
-  if(r.error){toast('Sem permissao para salvar este evento');return}
+  if(r.error){toast('Sem permiss\u00e3o para salvar este evento');return}
  }
  const locais=new Set(linhas.map(function(l){return l.id}));
  const apagar=[];
  idsRemotos.forEach(function(id){if(!locais.has(id))apagar.push(id)});
  if(apagar.length){
   const d=await sb.from('eventos').delete().in('id',apagar);
-  if(d.error){toast('Sem permissao para excluir');return}
+  if(d.error){toast('Sem permiss\u00e3o para excluir');return}
  }
  idsRemotos=locais;
 }
@@ -101,14 +101,13 @@ function atualizarBarraLogin(){
    '<span class="bl-func">'+textoFuncao()+'</span></div>'+
    '<button type="button" class="chip" onclick="sairNuvem()">Sair</button>';
  }else{
-  box.innerHTML='<div class="bl-quem"><span class="bl-func">Somente leitura</span></div>'+
-   '<button type="button" class="chip on" onclick="entrarNuvem()">Entrar</button>';
+  box.innerHTML='<button type="button" class="chip on bl-entrar" onclick="entrarNuvem()">Entrar</button>';
  }
  document.body.classList.toggle('somente-leitura',!usuario);
 }
 
 async function entrarNuvem(){
- if(!sb){toast('Nuvem indisponivel');return}
+ if(!sb){toast('Nuvem indispon\u00edvel');return}
  const em=prompt('E-mail:');
  if(!em)return;
  const se=prompt('Senha:');
@@ -124,7 +123,7 @@ async function entrarNuvem(){
 async function sairNuvem(){
  if(!sb)return;
  await sb.auth.signOut();
- toast('Voce saiu');
+ toast('Voc\u00ea saiu');
 }
 
 async function iniciarNuvem(){
