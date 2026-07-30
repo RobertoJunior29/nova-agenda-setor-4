@@ -1,5 +1,5 @@
-/* Sincronizacao na nuvem - IEADESGA - v40 */
-(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}\n#telaConfig .cf-card{max-width:700px}\n#telaConfig .cf-quem{min-width:130px}\n#telaConfig select{max-width:130px}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaSenha{position:fixed;inset:0;z-index:215;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaSenha .lg-card{background:#fff;color:#1f2933;width:100%;max-width:330px;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}\n#telaSenha h3{margin:0 0 2px;font-size:16px;color:#0b4f6c}\n#telaSenha .lg-sub{margin:0 0 16px;font-size:11px;color:#6b7280;word-break:break-all}\n#telaSenha label{display:block;text-align:left;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px}\n#telaSenha input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaSenha input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaSenha .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;text-align:left;margin:-6px 0 8px}\n#telaSenha .lg-acoes{display:flex;justify-content:space-between;align-items:center}\nbody[data-tema=\"dark\"] #telaSenha .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaSenha h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaSenha input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaSenha .lg-erro{color:#ff8a80}\nbody.somente-leitura #telaSenha .btn{display:inline-block!important}\n#locationFilter optgroup{font-style:normal;font-weight:700;color:#0b4f6c}\nbody[data-tema=\"dark\"] #locationFilter optgroup{color:#7fd4e8}\n#cartazBox{grid-column:1/-1}\n#cartazBox .cz-atual{display:flex;align-items:center;gap:10px;margin:2px 0 8px;padding:8px;border:1px solid #e2e8e6;border-radius:8px;background:#f7faf9}\n#cartazBox .cz-atual img{max-width:74px;max-height:74px;border-radius:5px;display:block;object-fit:cover}\n#cartazBox .cz-pdf{font-size:12px;color:#0b4f6c;text-decoration:none;font-weight:600;white-space:nowrap}\n#cartazBox .cz-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:flex-start}\n#cartazBox .cz-info span{font-size:11px;color:#6b7280;word-break:break-all;line-height:1.3}\n#cartazBox .cz-info button{font-size:10.5px;padding:3px 9px;border:1px solid #d9a5a0;background:#fff;color:#b3453b;border-radius:99px;cursor:pointer}\n#cartazBox .cz-info button:disabled{opacity:.5;cursor:default}\n#cartazBox input[type=file]{font-size:11.5px;width:100%;box-sizing:border-box}\n#cartazBox .cz-dica{font-size:10.5px;color:#6b7280;margin-top:4px;line-height:1.4}\nbody[data-tema=\"dark\"] #cartazBox .cz-atual{background:#1d272d;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #cartazBox .cz-pdf{color:#7fd4e8}\nbody[data-tema=\"dark\"] #cartazBox .cz-info span,body[data-tema=\"dark\"] #cartazBox .cz-dica{color:#93a4ad}\nbody[data-tema=\"dark\"] #cartazBox .cz-info button{background:#2a1f1f;border-color:#6b3b36;color:#ff8a80}\n#modalBackdrop,.modal-backdrop{overflow-y:auto!important;align-items:flex-start!important;padding:12px 0!important}\n#modalBackdrop>div,.modal-backdrop>div,.modal{max-height:92vh!important;overflow-y:auto!important;margin:auto!important}\n#modalBackdrop .field,.modal .field{margin-bottom:7px}\n#modalBackdrop label,.modal label{margin-bottom:2px;font-size:10.5px}\n#modalBackdrop input,#modalBackdrop select,#modalBackdrop textarea,.modal input,.modal select,.modal textarea{padding:6px 9px;font-size:13px}\n#modalBackdrop textarea,.modal textarea{min-height:48px;max-height:86px}\n#cartazBox .cz-atual{padding:6px;gap:8px;margin:2px 0 5px}\n#cartazBox .cz-atual img{max-width:52px;max-height:52px}\n#cartazBox .cz-dica{font-size:10px;margin-top:2px}\n#anoFiltro{margin-left:6px;font-weight:600}\n#cartazBox .cz-atual{align-items:flex-start;gap:10px}\n#cartazBox .cz-mini{display:flex;align-items:center;justify-content:center;position:relative;width:76px;min-height:60px;max-height:100px;border:1px solid #dfe7e5;border-radius:6px;background:#fff;overflow:hidden;flex:0 0 auto;text-decoration:none}\n#cartazBox .cz-mini img,#cartazBox .cz-mini canvas{max-width:100%;max-height:100px;display:block;object-fit:contain}\n#cartazBox .cz-mini canvas:not(.pronto){display:none}\n#cartazBox .cz-carregando{font-size:10px;color:#6b7280;letter-spacing:.5px}\n#cartazBox .cz-mini:hover{border-color:#0b4f6c}\n#cartazBox .cz-abrir{font-size:10.5px;color:#0b4f6c;text-decoration:underline;text-underline-offset:2px}\nbody[data-tema=\"dark\"] #cartazBox .cz-mini{background:#12181b;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #cartazBox .cz-abrir{color:#7fd4e8}\n.month-grid,.month-head,.month-days,.week-head{scrollbar-gutter:stable!important;box-sizing:border-box!important;width:100%!important}\n.month-grid{overflow-y:auto!important}\n.month-grid::-webkit-scrollbar,.month-cell::-webkit-scrollbar{width:6px}\n.month-grid::-webkit-scrollbar-thumb,.month-cell::-webkit-scrollbar-thumb{background:rgba(11,79,108,.28);border-radius:99px}\n.topbar,.toolbar{flex-wrap:nowrap!important}\n#anoFiltro{padding-left:6px;padding-right:4px;min-width:0}\nbody[data-tema=\"dark\"] .head,body[data-tema=\"dark\"] *:has(> .head){background:#161f24!important;border-color:#24313a!important}\nbody[data-tema=\"dark\"] .head h2,body[data-tema=\"dark\"] .head h2 *{color:#e6edf0!important}\nbody[data-tema=\"dark\"] .head span,body[data-tema=\"dark\"] .head small,body[data-tema=\"dark\"] .head div{color:#93a4ad!important}\n.month-grid,.month-head,.month-days,.week-head{grid-template-columns:repeat(7,minmax(0,1fr))!important}\n.month-cell,.month-cell *,.month-head>*,.week-head>*{min-width:0!important}\n.month-cell{overflow:hidden}\n.month-event,.event{min-width:0;max-width:100%;box-sizing:border-box;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word;overflow:hidden}\n.month-event b,.event b,.month-event strong,.event strong{overflow-wrap:anywhere}\n.list-item,.list-main{min-width:0;overflow-wrap:anywhere}";document.head.appendChild(st);})();
+/* Sincronizacao na nuvem - IEADESGA - v42 */
+(function(){var st=document.createElement('style');st.textContent=".app{padding-top:26px!important;box-sizing:border-box}\n#barraLogin{position:fixed;top:3px;right:14px;z-index:60;display:flex;align-items:center;gap:8px}\n#barraLogin .bl-quem{font-size:11px;line-height:1.25;text-align:right;color:#3c4a52}\n#barraLogin .bl-nome{font-weight:700;display:block}\n#barraLogin .bl-func{font-size:10px;color:#6b7280;display:block}\nbody[data-tema=\"dark\"] #barraLogin .bl-quem{color:#c3d1d8}\nbody[data-tema=\"dark\"] #barraLogin .bl-func{color:#93a4ad}\n#barraLogin .chip{white-space:nowrap}\n.somente-leitura .btn.primary{display:none!important}\n.somente-leitura .month-cell{cursor:default!important}\n#barraLogin .bl-entrar{font-size:13px;font-weight:700;padding:6px 18px;letter-spacing:.3px}\n#telaLogin{position:fixed;inset:0;z-index:200;background:rgba(10,20,26,.55);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaLogin .lg-card{background:#fff;color:#1f2933;width:100%;max-width:340px;border-radius:12px;padding:22px 22px 18px;box-shadow:0 18px 50px rgba(0,0,0,.3)}\n#telaLogin h3{margin:0;font-size:17px;color:#0b4f6c}\n#telaLogin .lg-sub{margin:4px 0 16px;font-size:11.5px;color:#6b7280}\n#telaLogin label{display:block;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px;letter-spacing:.3px}\n#telaLogin input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaLogin input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaLogin .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;margin:-6px 0 8px}\n#telaLogin .lg-acoes{display:flex;gap:8px;justify-content:flex-end}\nbody[data-tema=\"dark\"] #telaLogin .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaLogin h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaLogin input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaLogin .lg-erro{color:#ff8a80}\n#telaLogin .lg-card{text-align:center}\n#telaLogin .lg-logo{margin:0 0 12px}\n#telaLogin .lg-logo img{max-width:190px;max-height:105px;width:auto;height:auto;object-fit:contain;margin:0 auto;background:transparent!important;padding:0!important;border-radius:0!important}\n#telaLogin h3{font-size:16px;letter-spacing:.2px}\n#telaLogin .lg-sub{margin:3px 0 18px}\n#telaLogin label{text-align:left}\n#telaLogin .lg-erro{text-align:left}\nbody.somente-leitura #telaLogin .btn.primary{display:inline-block!important}\nbody.somente-leitura #telaLogin .btn{display:inline-block!important}\n#telaLogin .lg-acoes{justify-content:space-between;align-items:center;margin-top:2px}\n#telaLogin .lg-visitante{background:transparent;border:1px solid transparent;color:#6b7280;font-size:11.5px;padding:6px 2px;text-decoration:underline;text-underline-offset:2px}\n#telaLogin .lg-visitante:hover{color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante{color:#93a4ad}\nbody[data-tema=\"dark\"] #telaLogin .lg-visitante:hover{color:#7fd4e8}\n#telaLogin #loginOk{padding:8px 22px;font-weight:700}\n#telaLogin{background:rgba(8,16,21,.82);backdrop-filter:blur(4px)}\n#telaLogin .lg-criar{text-align:center;margin:-2px 0 12px}\n#telaLogin .lg-criar button{background:none;border:none;color:#0b4f6c;font-size:11.5px;text-decoration:underline;text-underline-offset:2px;cursor:pointer;padding:2px}\nbody[data-tema=\"dark\"] #telaLogin .lg-criar button{color:#7fd4e8}\n#barraLogin .bl-eng{font-size:14px;padding:4px 9px;line-height:1}\n#telaConfig{position:fixed;inset:0;z-index:210;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaConfig .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaConfig .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaConfig h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaConfig .cf-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaConfig .cf-quem{flex:1;min-width:150px;line-height:1.25}\n#telaConfig .cf-quem b{display:block;font-size:12.5px}\n#telaConfig .cf-quem span{display:block;font-size:10.5px;color:#6b7280;word-break:break-all}\n#telaConfig select{font-size:11.5px;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933}\n#telaConfig .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\nbody[data-tema=\"dark\"] #telaConfig .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaConfig h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaConfig .cf-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaConfig select{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaConfig .cf-nota,body[data-tema=\"dark\"] #telaConfig .cf-quem span{color:#93a4ad;border-top-color:#24313a}\n#telaConfig .cf-card{max-width:700px}\n#telaConfig .cf-quem{min-width:130px}\n#telaConfig select{max-width:130px}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaConfig .cf-nome{width:100%;box-sizing:border-box;font-size:12.5px;font-weight:700;padding:5px 7px;border:1px solid #cfdad7;border-radius:6px;background:#fff;color:#1f2933;margin-bottom:2px}\n#telaConfig .cf-nome:focus{outline:none;border-color:#0b4f6c}\nbody[data-tema=\"dark\"] #telaConfig .cf-nome{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\n#telaSenha{position:fixed;inset:0;z-index:215;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaSenha .lg-card{background:#fff;color:#1f2933;width:100%;max-width:330px;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.3);text-align:center}\n#telaSenha h3{margin:0 0 2px;font-size:16px;color:#0b4f6c}\n#telaSenha .lg-sub{margin:0 0 16px;font-size:11px;color:#6b7280;word-break:break-all}\n#telaSenha label{display:block;text-align:left;font-size:11px;font-weight:600;color:#6b7280;margin:0 0 4px}\n#telaSenha input{width:100%;box-sizing:border-box;padding:9px 11px;font-size:14px;border:1px solid #cfdad7;border-radius:7px;margin-bottom:12px;background:#fff;color:#1f2933}\n#telaSenha input:focus{outline:none;border-color:#0b4f6c;box-shadow:0 0 0 3px rgba(11,79,108,.12)}\n#telaSenha .lg-erro{min-height:16px;font-size:11.5px;color:#c0392b;text-align:left;margin:-6px 0 8px}\n#telaSenha .lg-acoes{display:flex;justify-content:space-between;align-items:center}\nbody[data-tema=\"dark\"] #telaSenha .lg-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaSenha h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaSenha input{background:#1d272d;color:#e6edf0;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #telaSenha .lg-erro{color:#ff8a80}\nbody.somente-leitura #telaSenha .btn{display:inline-block!important}\n#locationFilter optgroup{font-style:normal;font-weight:700;color:#0b4f6c}\nbody[data-tema=\"dark\"] #locationFilter optgroup{color:#7fd4e8}\n#cartazBox{grid-column:1/-1}\n#cartazBox .cz-atual{display:flex;align-items:center;gap:10px;margin:2px 0 8px;padding:8px;border:1px solid #e2e8e6;border-radius:8px;background:#f7faf9}\n#cartazBox .cz-atual img{max-width:74px;max-height:74px;border-radius:5px;display:block;object-fit:cover}\n#cartazBox .cz-pdf{font-size:12px;color:#0b4f6c;text-decoration:none;font-weight:600;white-space:nowrap}\n#cartazBox .cz-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;align-items:flex-start}\n#cartazBox .cz-info span{font-size:11px;color:#6b7280;word-break:break-all;line-height:1.3}\n#cartazBox .cz-info button{font-size:10.5px;padding:3px 9px;border:1px solid #d9a5a0;background:#fff;color:#b3453b;border-radius:99px;cursor:pointer}\n#cartazBox .cz-info button:disabled{opacity:.5;cursor:default}\n#cartazBox input[type=file]{font-size:11.5px;width:100%;box-sizing:border-box}\n#cartazBox .cz-dica{font-size:10.5px;color:#6b7280;margin-top:4px;line-height:1.4}\nbody[data-tema=\"dark\"] #cartazBox .cz-atual{background:#1d272d;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #cartazBox .cz-pdf{color:#7fd4e8}\nbody[data-tema=\"dark\"] #cartazBox .cz-info span,body[data-tema=\"dark\"] #cartazBox .cz-dica{color:#93a4ad}\nbody[data-tema=\"dark\"] #cartazBox .cz-info button{background:#2a1f1f;border-color:#6b3b36;color:#ff8a80}\n#modalBackdrop,.modal-backdrop{overflow-y:auto!important;align-items:flex-start!important;padding:12px 0!important}\n#modalBackdrop>div,.modal-backdrop>div,.modal{max-height:92vh!important;overflow-y:auto!important;margin:auto!important}\n#modalBackdrop .field,.modal .field{margin-bottom:7px}\n#modalBackdrop label,.modal label{margin-bottom:2px;font-size:10.5px}\n#modalBackdrop input,#modalBackdrop select,#modalBackdrop textarea,.modal input,.modal select,.modal textarea{padding:6px 9px;font-size:13px}\n#modalBackdrop textarea,.modal textarea{min-height:48px;max-height:86px}\n#cartazBox .cz-atual{padding:6px;gap:8px;margin:2px 0 5px}\n#cartazBox .cz-atual img{max-width:52px;max-height:52px}\n#cartazBox .cz-dica{font-size:10px;margin-top:2px}\n#anoFiltro{margin-left:6px;font-weight:600}\n#cartazBox .cz-atual{align-items:flex-start;gap:10px}\n#cartazBox .cz-mini{display:flex;align-items:center;justify-content:center;position:relative;width:76px;min-height:60px;max-height:100px;border:1px solid #dfe7e5;border-radius:6px;background:#fff;overflow:hidden;flex:0 0 auto;text-decoration:none}\n#cartazBox .cz-mini img,#cartazBox .cz-mini canvas{max-width:100%;max-height:100px;display:block;object-fit:contain}\n#cartazBox .cz-mini canvas:not(.pronto){display:none}\n#cartazBox .cz-carregando{font-size:10px;color:#6b7280;letter-spacing:.5px}\n#cartazBox .cz-mini:hover{border-color:#0b4f6c}\n#cartazBox .cz-abrir{font-size:10.5px;color:#0b4f6c;text-decoration:underline;text-underline-offset:2px}\nbody[data-tema=\"dark\"] #cartazBox .cz-mini{background:#12181b;border-color:#2e3d47}\nbody[data-tema=\"dark\"] #cartazBox .cz-abrir{color:#7fd4e8}\n.month-grid,.month-head,.month-days,.week-head{scrollbar-gutter:stable!important;box-sizing:border-box!important;width:100%!important}\n.month-grid{overflow-y:auto!important}\n.month-grid::-webkit-scrollbar,.month-cell::-webkit-scrollbar{width:6px}\n.month-grid::-webkit-scrollbar-thumb,.month-cell::-webkit-scrollbar-thumb{background:rgba(11,79,108,.28);border-radius:99px}\n.topbar,.toolbar{flex-wrap:nowrap!important}\n#anoFiltro{padding-left:6px;padding-right:4px;min-width:0}\nbody[data-tema=\"dark\"] .head,body[data-tema=\"dark\"] *:has(> .head){background:#161f24!important;border-color:#24313a!important}\nbody[data-tema=\"dark\"] .head h2,body[data-tema=\"dark\"] .head h2 *{color:#e6edf0!important}\nbody[data-tema=\"dark\"] .head span,body[data-tema=\"dark\"] .head small,body[data-tema=\"dark\"] .head div{color:#93a4ad!important}\n.month-grid,.month-head,.month-days,.week-head{grid-template-columns:repeat(7,minmax(0,1fr))!important}\n.month-cell,.month-cell *,.month-head>*,.week-head>*{min-width:0!important}\n.month-cell{overflow:hidden}\n.month-event,.event{min-width:0;max-width:100%;box-sizing:border-box;white-space:normal!important;overflow-wrap:anywhere;word-break:break-word;overflow:hidden}\n.month-event b,.event b,.month-event strong,.event strong{overflow-wrap:anywhere}\n.list-item,.list-main{min-width:0;overflow-wrap:anywhere}\n#barraLogin .bl-sino{position:relative}\n#barraLogin .bl-sino.tem{background:#c0392b;border-color:#c0392b;color:#fff}\n#barraLogin .bl-sino i{font-style:normal;font-size:9px;font-weight:700;margin-left:2px}\n#telaAprov{position:fixed;inset:0;z-index:212;background:rgba(8,16,21,.72);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px}\n#telaAprov .cf-card{background:#fff;color:#1f2933;width:100%;max-width:620px;max-height:82vh;overflow-y:auto;border-radius:12px;padding:20px;box-shadow:0 18px 50px rgba(0,0,0,.32)}\n#telaAprov .cf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}\n#telaAprov h3{margin:0;font-size:16px;color:#0b4f6c}\n#telaAprov .ap-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #eef2f1;flex-wrap:wrap}\n#telaAprov .cf-quem{flex:1;min-width:180px;line-height:1.3}\n#telaAprov .cf-quem b{display:block;font-size:12.5px}\n#telaAprov .cf-quem span{display:block;font-size:10.5px;color:#6b7280}\n#telaAprov .ap-ok{background:#0d7f5e;border-color:#0d7f5e;color:#fff}\n#telaAprov .ap-no{background:#fff;border-color:#d9a5a0;color:#b3453b}\n#telaAprov .cf-nota{font-size:11px;color:#6b7280;line-height:1.5;margin:14px 0 0;border-top:1px solid #eef2f1;padding-top:12px}\n#apAviso{grid-column:1/-1;font-size:11px;font-weight:600;color:#8a5b00;background:#fff6e0;border:1px solid #f0d79a;border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.4}\nbody[data-tema=\"dark\"] #telaAprov .cf-card{background:#18232a;color:#e6edf0}\nbody[data-tema=\"dark\"] #telaAprov h3{color:#7fd4e8}\nbody[data-tema=\"dark\"] #telaAprov .ap-item{border-bottom-color:#24313a}\nbody[data-tema=\"dark\"] #telaAprov .cf-quem span,body[data-tema=\"dark\"] #telaAprov .cf-nota{color:#93a4ad;border-top-color:#24313a}\nbody[data-tema=\"dark\"] #telaAprov .ap-no{background:#2a1f1f;border-color:#6b3b36;color:#ff8a80}\nbody[data-tema=\"dark\"] #apAviso{background:#2c2415;border-color:#5c4a1f;color:#f0cf8a}\n#czAutor{grid-column:1/-1;font-size:10.5px;color:#6b7280;border-top:1px solid #eef2f1;margin-top:8px;padding-top:7px;line-height:1.4}\nbody[data-tema=\"dark\"] #czAutor{color:#93a4ad;border-top-color:#24313a}";document.head.appendChild(st);})();
 
 /* ===== SINCRONIZACAO NA NUVEM - IEADESGA ===== */
 const SUPA_URL='https://sblvlwzhwtlgbbabhwhj.supabase.co';
@@ -9,6 +9,7 @@ let sb=null, usuario=null, perfil=null, pausado=false, idsRemotos=new Set();
 let ultimoEstado={}, donos={}, chaveEventos=null, _origSet=null;
 let CONGREGACOES=[], _rotuloTodas=null, _jaConferiu=false, _avisouCampos=false;
 let _cartazPendente=null, _anoLido=null, _alinhouLog=false;
+let aprovados={}, _pendentes=[], _nomesPerfis={};
 
 const NOMES_PAPEL={admin:'Secretaria Geral',secretario:'Secret\u00e1rio do Setor',secretario_congr:'Secret\u00e1rio de Congrega\u00e7\u00e3o',leitor:'Leitor'};
 
@@ -38,10 +39,10 @@ function carregarSDK(){return new Promise(function(ok,err){
 
 async function baixarNuvem(){
  if(!sb||pausado)return;
- const r=await sb.from('eventos').select('id,dados,criado_por');
+ const r=await sb.from('eventos').select('id,dados,criado_por,aprovado');
  if(r.error){console.log('erro ao baixar:',r.error.message);return}
- donos={};
- r.data.forEach(function(x){donos[String(x.id)]=x.criado_por});
+ donos={};aprovados={};
+ r.data.forEach(function(x){donos[String(x.id)]=x.criado_por;aprovados[String(x.id)]=x.aprovado});
  idsRemotos=new Set(r.data.map(function(x){return String(x.id)}));
  const novos=r.data.map(function(x){
   const e=Object.assign({},x.dados);e.id=x.id;return e;
@@ -105,6 +106,7 @@ function instalarGancho(){
    const p=JSON.parse(v);
    if(Array.isArray(p)&&p.length&&p[0]&&p[0].date&&p[0].title){
     chaveEventos=k;
+    marcarAutor();
     aplicarCartazPendente();
     clearTimeout(window._tmrNuvem);
     window._tmrNuvem=setTimeout(enviarNuvem,300);
@@ -129,11 +131,14 @@ function atualizarBarraLogin(){
  if(usuario){
   const nome=(perfil&&perfil.nome)?perfil.nome:usuario.email;
   const chave='<button type="button" class="chip bl-eng" onclick="abrirTrocaSenha()" title="Trocar minha senha">\ud83d\udd11</button>';
+  const sino=(perfil&&perfil.papel==='admin')
+   ?'<button type="button" class="chip bl-eng bl-sino" onclick="abrirAprovacoes()" title="Eventos aguardando aprova\u00e7\u00e3o">\ud83d\udd14<i id="blQtd"></i></button>'
+   :'';
   const eng=(perfil&&perfil.papel==='admin')
    ?'<button type="button" class="chip bl-eng" onclick="abrirConfig()" title="Acessos da equipe">\u2699</button>'
    :'';
   box.innerHTML='<div class="bl-quem"><span class="bl-nome">'+nome+'</span>'+
-   '<span class="bl-func">'+textoFuncao()+'</span></div>'+chave+eng+
+   '<span class="bl-func">'+textoFuncao()+'</span></div>'+sino+chave+eng+
    '<button type="button" class="chip" onclick="sairNuvem()">Sair</button>';
  }else{
   box.innerHTML='<button type="button" class="chip on bl-entrar" onclick="entrarNuvem()">Entrar</button>';
@@ -239,6 +244,8 @@ async function iniciarNuvem(){
  limparTextos();
  setTimeout(alinharGrade,150);
  setTimeout(alinharGrade,600);
+ contarPendentes(true);
+ setInterval(function(){contarPendentes(false)},60000);
  ligarInjecaoNoRender();
  montarBarraLogin();
  instalarGancho();
@@ -355,6 +362,8 @@ try{
     travarModalLeitura(id);
     if(m)prepararCartaz(m,id);
     if(m)ocultarCampos(m);
+    if(m)avisoPendente(m,id);
+    if(m)mostrarAutor(m,id);
    },40);
   };
  }
@@ -1044,6 +1053,137 @@ function limparTextos(){
    if(TEXTOS_REMOVER[j].test(t)){el.style.display='none';break}
   }
  }
+}
+
+
+/* ---------- aprovacao de eventos ---------- */
+async function contarPendentes(avisar){
+ if(!sb||!perfil||perfil.papel!=='admin')return;
+ const r=await sb.from('eventos').select('id,dados,criado_por').eq('aprovado',false);
+ if(r.error){console.log('pendentes:',r.error.message);return}
+ _pendentes=r.data||[];
+ const marca=document.getElementById('blQtd');
+ if(marca)marca.textContent=_pendentes.length?String(_pendentes.length):'';
+ const bt=marca?marca.parentElement:null;
+ if(bt)bt.classList.toggle('tem',_pendentes.length>0);
+ if(avisar&&_pendentes.length){
+  toast(_pendentes.length+' evento(s) aguardando sua aprova\u00e7\u00e3o.');
+ }
+}
+
+async function abrirAprovacoes(){
+ if(!perfil||perfil.papel!=='admin'){toast('Acesso restrito \u00e0 Secretaria Geral');return}
+ if(document.getElementById('telaAprov'))return;
+ const bg=document.createElement('div');
+ bg.id='telaAprov';
+ bg.innerHTML=
+  '<div class="cf-card">'+
+   '<div class="cf-topo"><h3>Eventos aguardando aprova\u00e7\u00e3o</h3>'+
+   '<button type="button" class="chip" id="apFechar">Fechar</button></div>'+
+   '<div id="apLista" class="cf-lista">Carregando...</div>'+
+   '<p class="cf-nota">Eventos criados por secret\u00e1rios ficam vis\u00edveis apenas para o autor e para a '+
+   'Secretaria Geral at\u00e9 serem aprovados. <b>Recusar</b> exclui o evento definitivamente.</p>'+
+  '</div>';
+ document.body.appendChild(bg);
+ document.getElementById('apFechar').onclick=function(){bg.remove()};
+ await contarPendentes(false);
+ await listarPendentes();
+}
+
+async function listarPendentes(){
+ const box=document.getElementById('apLista');
+ if(!box)return;
+ if(!_pendentes.length){box.textContent='Nenhum evento pendente.';return}
+ const nomes={};
+ const rp=await sb.from('perfis').select('user_id,nome,email');
+ if(!rp.error&&rp.data)rp.data.forEach(function(p){
+  nomes[p.user_id]=p.nome||p.email;
+  _nomesPerfis[p.user_id]=p.nome||p.email;
+ });
+ box.innerHTML='';
+ _pendentes.forEach(function(row){
+  const d=row.dados||{};
+  const li=document.createElement('div');
+  li.className='cf-item ap-item';
+  const quando=(d.date||'')+(d.time?' \u00e0s '+d.time:'');
+  const onde=[d.setor,d.location].filter(Boolean).join(' \u2013 ');
+  li.innerHTML=
+   '<div class="cf-quem"><b>'+(d.title||'(sem t\u00edtulo)')+'</b>'+
+   '<span>'+quando+(onde?' | '+onde:'')+'</span>'+
+   '<span>por '+(nomes[row.criado_por]||'desconhecido')+'</span></div>'+
+   '<button type="button" class="chip ap-ok">Aprovar</button>'+
+   '<button type="button" class="chip ap-no">Recusar</button>';
+  li.querySelector('.ap-ok').onclick=async function(ev){
+   ev.currentTarget.disabled=true;
+   const u=await sb.from('eventos').update({aprovado:true}).eq('id',row.id);
+   if(u.error){toast('Erro: '+u.error.message);ev.currentTarget.disabled=false;return}
+   toast('Evento aprovado');
+   await contarPendentes(false);await listarPendentes();await baixarNuvem();
+  };
+  li.querySelector('.ap-no').onclick=async function(ev){
+   if(!confirm('Recusar e excluir "'+(d.title||'evento')+'"?'))return;
+   ev.currentTarget.disabled=true;
+   const u=await sb.from('eventos').delete().eq('id',row.id);
+   if(u.error){toast('Erro: '+u.error.message);ev.currentTarget.disabled=false;return}
+   toast('Evento recusado e exclu\u00eddo');
+   await contarPendentes(false);await listarPendentes();await baixarNuvem();
+  };
+  box.appendChild(li);
+ });
+}
+
+function avisoPendente(m,id){
+ const antigo=document.getElementById('apAviso');
+ if(antigo)antigo.remove();
+ if(!id||aprovados[String(id)]!==false)return;
+ const d=document.createElement('div');
+ d.id='apAviso';
+ d.textContent=(perfil&&perfil.papel==='admin')
+  ? 'Este evento aguarda aprova\u00e7\u00e3o \u2013 use o sino para aprovar.'
+  : 'Aguardando aprova\u00e7\u00e3o da Secretaria Geral. Ainda n\u00e3o aparece para os demais.';
+ const alvo=m.querySelector('.form-grid')||m;
+ alvo.insertBefore(d,alvo.firstChild);
+}
+
+
+/* ---------- registro de autoria ---------- */
+function marcarAutor(){
+ if(!usuario)return;
+ const quem=(perfil&&perfil.nome)?perfil.nome:usuario.email;
+ const funcao=(perfil&&perfil.papel)?rotuloPapel(perfil.papel):'';
+ let mudou=false;
+ for(let i=0;i<events.length;i++){
+  const k=String(events[i].id);
+  if(!(k in ultimoEstado)&&!events[i].autor){
+   events[i].autor=quem;
+   if(funcao)events[i].autorFuncao=funcao;
+   events[i].autorEm=new Date().toISOString();
+   mudou=true;
+  }
+ }
+ if(mudou)gravarLocal();
+}
+
+function mostrarAutor(m,id){
+ const antigo=document.getElementById('czAutor');
+ if(antigo)antigo.remove();
+ if(!id)return;
+ const ev=events.filter(function(e){return String(e.id)===String(id)})[0];
+ if(!ev)return;
+ let quem=ev.autor||'';
+ if(!quem&&_nomesPerfis&&donos[String(id)])quem=_nomesPerfis[donos[String(id)]]||'';
+ if(!quem)quem='n\u00e3o registrado';
+ let txt='Criado por '+quem;
+ if(ev.autorFuncao)txt+=' \u2013 '+ev.autorFuncao;
+ if(ev.autorEm){
+  const d=new Date(ev.autorEm);
+  if(!isNaN(d))txt+=' \u00b7 '+d.toLocaleDateString('pt-BR');
+ }
+ const el=document.createElement('div');
+ el.id='czAutor';
+ el.textContent=txt;
+ const alvo=m.querySelector('.form-grid')||m;
+ alvo.appendChild(el);
 }
 
 iniciarNuvem();
