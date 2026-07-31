@@ -543,7 +543,7 @@ async function carregarNotas(){
     if(n) itens.push({
       tipo: 'acao',
       txt: '<b>' + n + ' evento' + (n>1?'s':'') + '</b> aguardando sua aprova\u00e7\u00e3o na agenda.',
-      ir: 'Aprovar \u2192',
+      ir: 'Analisar \u2192',
       alvo: 'agenda.html?painel=aprovacoes'
     });
   } else if(perfil.papel === 'secretario' || perfil.papel === 'secretario_congr'){
