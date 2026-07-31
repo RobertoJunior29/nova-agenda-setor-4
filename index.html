@@ -634,6 +634,7 @@ async function fazerLogin(){
   bt.disabled = false; bt.textContent = 'Entrar';
   if(r.error){ er.textContent = 'E-mail ou senha incorretos.'; se.value = ''; se.focus(); return; }
   se.value = '';
+  marcarAtividade();
   fecharLogin();
 }
 
@@ -944,6 +945,45 @@ document.querySelectorAll('.chip').forEach(c => {
   });
 });
 
+
+/* ===================== EXPIRAÇÃO POR INATIVIDADE ===================== */
+const INATIVIDADE_MIN = 30;
+const AVISO_ANTES_MIN = 2;
+const CHAVE_ATIV = 'ieadesga_ultima_atividade';
+let _ultMarca = 0, _avisou = false;
+
+function marcarAtividade(){
+  const agora = Date.now();
+  if(agora - _ultMarca < 5000) return;
+  _ultMarca = agora; _avisou = false;
+  try{ localStorage.setItem(CHAVE_ATIV, String(agora)); }catch(e){}
+}
+['mousedown','keydown','scroll','touchstart','click','mousemove'].forEach(ev =>
+  document.addEventListener(ev, marcarAtividade, { passive:true }));
+
+async function encerrarPorInatividade(){
+  try{ localStorage.removeItem(CHAVE_ATIV); }catch(e){}
+  ['#telaForm','#telaOk','#telaLista'].forEach(s => {
+    const t = el(s); if(t) t.classList.remove('ver');
+  });
+  if(sb) await sb.auth.signOut();
+  abrirLogin('Sua sess\u00e3o foi encerrada por inatividade. Entre novamente.');
+}
+
+function conferirInatividade(){
+  if(!usuario) return;
+  let t = 0;
+  try{ t = Number(localStorage.getItem(CHAVE_ATIV) || 0); }catch(e){}
+  if(!t){ marcarAtividade(); return; }
+  const min = (Date.now() - t) / 60000;
+  if(min >= INATIVIDADE_MIN) encerrarPorInatividade();
+  else if(min >= INATIVIDADE_MIN - AVISO_ANTES_MIN && !_avisou){
+    _avisou = true;
+    recado('Sua sess\u00e3o encerra em <b>2 minutos</b> por inatividade. Mexa na tela para continuar.');
+  }
+}
+setInterval(conferirInatividade, 20000);
+
 /* ---------- partida ---------- */
 async function iniciar(){
   if(!window.supabase || !window.supabase.createClient){
@@ -956,6 +996,7 @@ async function iniciar(){
   usuario = (s.data && s.data.session) ? s.data.session.user : null;
   await carregarPerfil();
   await carregarCongregacoes();
+  if(usuario) marcarAtividade();
   pintarBarra();
   carregarNotas();
   contarSolicitacoes();
