@@ -234,6 +234,7 @@ body{
 .linha-ped .txt{flex:1;min-width:170px}
 .linha-ped .txt b{display:block;font-family:var(--display);font-size:1.05rem;color:var(--marinho)}
 .linha-ped .txt span{display:block;font-size:.82rem;color:var(--suave);margin-top:2px}
+.linha-ped .dest{display:block;font-size:.82rem;color:var(--azul);font-weight:600;margin-top:3px}
 .linha-ped .motivo{flex-basis:100%;font-size:.82rem;color:var(--vermelhao);margin-top:2px}
 .eti{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
   padding:5px 11px;border-radius:999px;white-space:nowrap}
@@ -763,12 +764,25 @@ function montarSetorCongr(){
 function montarCamposDestino(tipo){
   const cx = el('#camposDestino');
   if(tipo === 'campo'){
-    const nomes = CONGREGACOES.map(x => x.nome);
     cx.innerHTML =
-      '<div class="campo largo"><label>Congregação de destino *</label>' +
-      '<select id="dCongr"><option value="">Escolha a congregação</option>' +
-      nomes.map(n => '<option>' + n + '</option>').join('') + '</select>' +
-      '<span class="dica">Congregações da IEADESGA, em São Gonçalo do Amarante.</span></div>';
+      '<div class="campo"><label>Setor de destino *</label>' +
+      '<select id="dSetor"><option value="">Escolha o setor</option>' +
+      SETORES_LISTA.map(s => '<option>' + s + '</option>').join('') + '</select></div>' +
+      '<div class="campo"><label>Congregação de destino *</label>' +
+      '<select id="dCongr"><option value="">Escolha o setor primeiro</option></select></div>' +
+      '<span class="dica" style="grid-column:1/-1;margin-top:-4px">' +
+      'Congregações da IEADESGA, em São Gonçalo do Amarante.</span>';
+    const ds = el('#dSetor'), dc = el('#dCongr');
+    ds.onchange = () => {
+      const lista = CONGREGACOES.filter(x => x.setor === ds.value).map(x => x.nome);
+      if(!ds.value){
+        dc.innerHTML = '<option value="">Escolha o setor primeiro</option>';
+        return;
+      }
+      dc.innerHTML = '<option value="">Escolha a congregação</option>' +
+        lista.map(n => '<option>' + n + '</option>').join('');
+      if(lista.length === 1) dc.value = lista[0];
+    };
   } else if(tipo === 'municipio'){
     cx.innerHTML =
       '<div class="campo"><label>Município *</label><input id="dCidade" placeholder="Nome do município"></div>' +
@@ -841,6 +855,7 @@ async function enviarSolicitacao(){
     if(!marcado){ er.textContent = 'Marque para onde a carta se destina.'; return; }
     linha.destino_tipo = marcado.value;
     if(marcado.value === 'campo'){
+      if(!valor('#dSetor')){ er.textContent = 'Escolha o setor de destino.'; return; }
       if(!valor('#dCongr')){ er.textContent = 'Escolha a congregação de destino.'; return; }
       linha.destino_congregacao = valor('#dCongr');
     } else if(marcado.value === 'municipio'){
@@ -906,6 +921,29 @@ ligarMascara('#fmDoc', mascaraDoc);
 ligarMascara('#fmFone', mascaraFone);
 
 /* ---------- lista ---------- */
+
+function textoDestino(s){
+  if(s.tipo === 'Carta de recomendação'){
+    switch(s.destino_tipo){
+      case 'campo':
+        return 'Destino: ' + (s.destino_congregacao || '—') + ' \u00b7 mesmo campo';
+      case 'municipio':
+        return 'Destino: ' + (s.destino_congregacao || '—') +
+               ' \u00b7 ' + (s.destino_cidade || '—');
+      case 'estado':
+        return 'Destino: ' + (s.destino_cidade || '—') + '/' + (s.destino_uf || '—');
+      case 'pais':
+        return 'Destino: ' + (s.destino_pais || '—');
+      case 'transito':
+        return 'Carta de tr\u00e2nsito \u00b7 sem destino definido';
+      default:
+        return '';
+    }
+  }
+  if(s.tipo === 'Carta de mudança' && s.detalhe) return 'Destino: ' + s.detalhe;
+  return '';
+}
+
 const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto', recusado:'Recusado' };
 
 async function abrirLista(filtro){
@@ -934,6 +972,7 @@ async function abrirLista(filtro){
     let html = '<span class="cod">' + (s.protocolo || '—') + '</span>' +
       '<span class="txt"><b>' + s.tipo + '</b>' +
       '<span>' + s.membro_nome + ' · ' + s.congregacao + '</span>' +
+      (textoDestino(s) ? '<span class="dest">' + textoDestino(s) + '</span>' : '') +
       '<span>por ' + (s.autor_nome || '—') + ' · ' + quando + '</span></span>' +
       '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
     if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
