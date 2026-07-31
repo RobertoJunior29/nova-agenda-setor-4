@@ -175,6 +175,35 @@ body{
 
 
 
+
+/* ---------- notificações da agenda ---------- */
+.agenda{position:relative}
+.selo-nota{
+  position:absolute;top:-9px;right:-7px;min-width:26px;height:26px;padding:0 8px;
+  border-radius:999px;background:var(--vermelhao);color:#fff;
+  font-family:var(--sans);font-size:12.5px;font-weight:700;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(176,69,59,.5);border:2px solid var(--fundo);
+}
+.selo-nota.ver{display:flex}
+.notas{display:grid;gap:9px;margin-top:10px}
+.nota{
+  display:flex;align-items:center;gap:13px;flex-wrap:wrap;
+  text-decoration:none;color:inherit;
+  border-radius:10px;padding:14px 18px;border:1px solid transparent;
+  transition:.2s cubic-bezier(.2,.8,.2,1);
+}
+.nota:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(11,45,61,.1)}
+.nota .ponto{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.nota .txt{flex:1;min-width:160px;font-size:.9rem;line-height:1.5}
+.nota .txt b{font-weight:700}
+.nota .ir{font-size:.82rem;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:7px;transition:.2s}
+.nota:hover .ir{gap:12px}
+.nota.acao{background:#fbe9e7;border-color:#f0cdc8;color:#7c342c}
+.nota.acao .ponto{background:var(--vermelhao)} .nota.acao .ir{color:#8f3d35}
+.nota.espera{background:var(--chama-fundo);border-color:#f2d9bd;color:#7d4415}
+.nota.espera .ponto{background:#a04d16} .nota.espera .ir{color:#8a4413}
+
 /* ---------- barra com sessão ---------- */
 .barra .entrar{
   font-family:var(--sans);font-size:.8rem;font-weight:600;letter-spacing:0;text-transform:none;
@@ -266,7 +295,10 @@ body{
       <span>Programação da Sede e dos cinco setores, atualizada em tempo real.</span>
     </span>
     <span class="ir">Abrir →</span>
+    <span class="selo-nota" id="seloAgenda"></span>
   </a>
+
+  <div class="notas" id="notas"></div>
 
   <p class="rotulo">Solicitar documento</p>
 
@@ -485,6 +517,59 @@ async function carregarPerfil(){
   if(!r.error && r.data) perfil = r.data;
 }
 
+
+/* ---------- notificações vindas da agenda ---------- */
+async function carregarNotas(){
+  const cx = el('#notas'), selo = el('#seloAgenda');
+  if(!cx) return;
+  cx.innerHTML = '';
+  if(selo){ selo.classList.remove('ver'); selo.textContent = ''; }
+  if(!sb || !usuario || !perfil) return;
+
+  const itens = [];
+
+  async function contar(monta){
+    const r = await monta(sb.from('eventos').select('id', { count: 'exact', head: true }));
+    return r.error ? 0 : (r.count || 0);
+  }
+
+  if(perfil.papel === 'admin'){
+    const n = await contar(q => q.eq('aprovado', false).is('recusa', null));
+    if(n) itens.push({
+      tipo: 'acao',
+      txt: '<b>' + n + ' evento' + (n>1?'s':'') + '</b> aguardando sua aprova\u00e7\u00e3o na agenda.',
+      ir: 'Aprovar \u2192'
+    });
+  } else if(perfil.papel === 'secretario' || perfil.papel === 'secretario_congr'){
+    const rec = await contar(q => q.eq('criado_por', usuario.id).not('recusa', 'is', null));
+    if(rec) itens.push({
+      tipo: 'acao',
+      txt: '<b>' + rec + ' evento' + (rec>1?'s':'') + '</b> que voc\u00ea criou ' +
+           (rec>1?'foram recusados':'foi recusado') + '. Abra para ver o motivo e corrigir.',
+      ir: 'Ver motivo \u2192'
+    });
+    const pen = await contar(q => q.eq('criado_por', usuario.id).eq('aprovado', false).is('recusa', null));
+    if(pen) itens.push({
+      tipo: 'espera',
+      txt: '<b>' + pen + ' evento' + (pen>1?'s':'') + '</b> aguardando aprova\u00e7\u00e3o da Secretaria Geral.',
+      ir: 'Acompanhar \u2192'
+    });
+  }
+
+  const acoes = itens.filter(i => i.tipo === 'acao').length;
+  if(selo && acoes){ selo.textContent = String(acoes); selo.classList.add('ver'); }
+
+  itens.forEach(i => {
+    const a = document.createElement('a');
+    a.className = 'nota ' + i.tipo;
+    a.href = 'agenda.html';
+    a.innerHTML = '<span class="ponto"></span>' +
+                  '<span class="txt">' + i.txt + '</span>' +
+                  '<span class="ir">' + i.ir + '</span>';
+    cx.appendChild(a);
+  });
+}
+
 /* ---------- partida ---------- */
 async function iniciar(){
   if(!window.supabase || !window.supabase.createClient){
@@ -497,6 +582,7 @@ async function iniciar(){
   usuario = (s.data && s.data.session) ? s.data.session.user : null;
   await carregarPerfil();
   pintarBarra();
+  carregarNotas();
   sb.auth.onAuthStateChange(async function(_ev, sess){
     usuario = sess ? sess.user : null;
     await carregarPerfil();
