@@ -249,6 +249,7 @@ body{
 .eti.aguardando{background:#fbe9e7;color:#8f3d35}
 .eti.preparo{background:var(--chama-fundo);color:#8a4413}
 .eti.pronto{background:var(--verde-fundo);color:#3a6132}
+.eti.entregue{background:var(--azul-fundo);color:#3d6478}
 .eti.recusado{background:#f3e6e4;color:#7c342c}
 .vazio-lista{font-size:.9rem;color:var(--suave);padding:10px 0}
 
@@ -460,7 +461,7 @@ body{
       <span class="passo">Etapa 3</span>
       <span class="n">0</span>
       <span class="r">Pronto</span>
-      <span class="d">Arquivo disponível para baixar</span>
+      <span class="d">Aguardando o secretário baixar</span>
     </a>
   </div>
   <div class="rodape-estado">
@@ -980,7 +981,8 @@ function textoDestino(s){
   return '';
 }
 
-const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto', recusado:'Recusado' };
+const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto',
+                     entregue:'Entregue', recusado:'Recusado' };
 
 async function abrirLista(filtro){
   el('#telaLista').classList.add('ver');
@@ -1013,22 +1015,28 @@ async function abrirLista(filtro){
       '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
     if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
     div.innerHTML = html;
-    if(s.situacao === 'pronto' && s.arquivo){
+    if((s.situacao === 'pronto' || s.situacao === 'entregue') && s.arquivo){
       const b = document.createElement('button');
-      b.className = 'bt pq ouro'; b.type = 'button'; b.textContent = 'Baixar';
-      b.onclick = () => baixarDocumento(s.arquivo, s.arquivo_nome);
+      b.type = 'button';
+      b.className = 'bt pq ' + (s.situacao === 'pronto' ? 'ouro' : 'vazio');
+      b.textContent = s.situacao === 'pronto' ? 'Baixar' : 'Baixar de novo';
+      b.onclick = () => baixarDocumento(s.arquivo, s.arquivo_nome, s.id, s.situacao);
       div.appendChild(b);
     }
     cx.appendChild(div);
   });
 }
 
-async function baixarDocumento(caminho, nome){
+async function baixarDocumento(caminho, nome, id, situacao){
   const r = await sb.storage.from('documentos').createSignedUrl(caminho, 120);
   if(r.error){ recado('Não foi possível abrir o arquivo.'); return; }
   const a = document.createElement('a');
   a.href = r.data.signedUrl; a.download = nome || 'documento.pdf';
   a.target = '_blank'; a.click();
+  if(id && situacao === 'pronto'){
+    const u = await sb.from('solicitacoes').update({ situacao:'entregue' }).eq('id', id);
+    if(!u.error){ contarSolicitacoes(); carregarNotas(); }
+  }
 }
 
 /* ---------- contadores ---------- */
@@ -1047,6 +1055,7 @@ async function contarSolicitacoes(){
   if(pr) pr.classList.toggle('pede', !pr.classList.contains('vazio'));
   const ano = new Date().getFullYear();
   const t = await sb.from('solicitacoes').select('id', { count:'exact', head:true })
+    .eq('situacao', 'entregue')
     .gte('criado_em', ano + '-01-01');
   const ct = el('.chip.total .n');
   if(ct) ct.textContent = t.error ? '0' : (t.count || 0);
@@ -1065,7 +1074,7 @@ document.querySelectorAll('.chip').forEach(c => {
     ev.preventDefault();
     if(!usuario) return abrirLogin('Entre para acompanhar as solicitações.');
     const m = c.className.match(/chip (aguarda|preparo|pronto|recusa|total)/);
-    const mapa = { aguarda:'aguardando', preparo:'preparo', pronto:'pronto', recusa:'recusado', total:null };
+    const mapa = { aguarda:'aguardando', preparo:'preparo', pronto:'pronto', recusa:'recusado', total:'entregue' };
     abrirLista(m ? mapa[m[1]] : null);
   });
 });
