@@ -543,7 +543,8 @@ async function carregarNotas(){
     if(n) itens.push({
       tipo: 'acao',
       txt: '<b>' + n + ' evento' + (n>1?'s':'') + '</b> aguardando sua aprova\u00e7\u00e3o na agenda.',
-      ir: 'Aprovar \u2192'
+      ir: 'Aprovar \u2192',
+      alvo: 'agenda.html?painel=aprovacoes'
     });
   } else if(perfil.papel === 'secretario' || perfil.papel === 'secretario_congr'){
     const rec = await contar(q => q.eq('criado_por', usuario.id).not('recusa', 'is', null));
@@ -551,13 +552,15 @@ async function carregarNotas(){
       tipo: 'acao',
       txt: '<b>' + rec + ' evento' + (rec>1?'s':'') + '</b> que voc\u00ea criou ' +
            (rec>1?'foram recusados':'foi recusado') + '. Abra para ver o motivo e corrigir.',
-      ir: 'Ver motivo \u2192'
+      ir: 'Ver motivo \u2192',
+      alvo: 'agenda.html?painel=notificacoes'
     });
     const pen = await contar(q => q.eq('criado_por', usuario.id).eq('aprovado', false).is('recusa', null));
     if(pen) itens.push({
       tipo: 'espera',
       txt: '<b>' + pen + ' evento' + (pen>1?'s':'') + '</b> aguardando aprova\u00e7\u00e3o da Secretaria Geral.',
-      ir: 'Acompanhar \u2192'
+      ir: 'Acompanhar \u2192',
+      alvo: 'agenda.html?painel=notificacoes'
     });
   }
 
@@ -567,7 +570,7 @@ async function carregarNotas(){
   itens.forEach(i => {
     const a = document.createElement('a');
     a.className = 'nota ' + i.tipo;
-    a.href = 'agenda.html';
+    a.href = i.alvo || 'agenda.html';
     a.innerHTML = '<span class="ponto"></span>' +
                   '<span class="txt">' + i.txt + '</span>' +
                   '<span class="ir">' + i.ir + '</span>';
