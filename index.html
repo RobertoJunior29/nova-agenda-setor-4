@@ -461,6 +461,7 @@ body{
     <div class="campo largo" style="margin-top:16px">
       <label>A carta é para *</label>
       <div class="opcoes">
+        <label class="opc"><input type="radio" name="dest" value="campo"> Outra congregação do campo</label>
         <label class="opc"><input type="radio" name="dest" value="municipio"> Outro município</label>
         <label class="opc"><input type="radio" name="dest" value="estado"> Outro estado</label>
         <label class="opc"><input type="radio" name="dest" value="pais"> Outro país</label>
@@ -761,7 +762,14 @@ function montarSetorCongr(){
 
 function montarCamposDestino(tipo){
   const cx = el('#camposDestino');
-  if(tipo === 'municipio'){
+  if(tipo === 'campo'){
+    const nomes = CONGREGACOES.map(x => x.nome);
+    cx.innerHTML =
+      '<div class="campo largo"><label>Congregação de destino *</label>' +
+      '<select id="dCongr"><option value="">Escolha a congregação</option>' +
+      nomes.map(n => '<option>' + n + '</option>').join('') + '</select>' +
+      '<span class="dica">Congregações da IEADESGA, em São Gonçalo do Amarante.</span></div>';
+  } else if(tipo === 'municipio'){
     cx.innerHTML =
       '<div class="campo"><label>Município *</label><input id="dCidade" placeholder="Nome do município"></div>' +
       '<div class="campo"><label>Congregação de destino *</label><input id="dCongr" placeholder="Nome da congregação"></div>';
@@ -832,7 +840,10 @@ async function enviarSolicitacao(){
     const marcado = document.querySelector('input[name=dest]:checked');
     if(!marcado){ er.textContent = 'Marque para onde a carta se destina.'; return; }
     linha.destino_tipo = marcado.value;
-    if(marcado.value === 'municipio'){
+    if(marcado.value === 'campo'){
+      if(!valor('#dCongr')){ er.textContent = 'Escolha a congregação de destino.'; return; }
+      linha.destino_congregacao = valor('#dCongr');
+    } else if(marcado.value === 'municipio'){
       if(!valor('#dCidade') || !valor('#dCongr')){
         er.textContent = 'Informe o município e a congregação de destino.'; return; }
       linha.destino_cidade = valor('#dCidade');
@@ -862,6 +873,37 @@ async function enviarSolicitacao(){
   el('#telaOk').classList.add('ver');
   contarSolicitacoes();
 }
+
+
+/* ---------- máscaras ---------- */
+function soDigitos(s){ return String(s || '').replace(/\D/g, ''); }
+
+function mascaraDoc(v){
+  const d = soDigitos(v).slice(0, 11);
+  if(d.length <= 6) return d;                       // nº de Rol fica como está
+  if(d.length <= 9) return d.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+  return d.replace(/(\d{3})(\d{3})(\d{3})(\d+)/, '$1.$2.$3-$4');
+}
+
+function mascaraFone(v){
+  const d = soDigitos(v).slice(0, 11);
+  if(d.length <= 2) return d;
+  if(d.length <= 6) return '(' + d.slice(0,2) + ') ' + d.slice(2);
+  if(d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+  return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+}
+
+function ligarMascara(id, fn){
+  const c = el(id);
+  if(!c) return;
+  c.addEventListener('input', () => {
+    const antes = c.value, fim = c.selectionEnd === antes.length;
+    c.value = fn(antes);
+    if(fim) c.setSelectionRange(c.value.length, c.value.length);
+  });
+}
+ligarMascara('#fmDoc', mascaraDoc);
+ligarMascara('#fmFone', mascaraFone);
 
 /* ---------- lista ---------- */
 const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto', recusado:'Recusado' };
