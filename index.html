@@ -80,20 +80,28 @@ body{
 }
 
 /* ---------- estado ---------- */
-.estado{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;
-  margin:0;
-}
-.chip{
-  display:block;text-decoration:none;color:inherit;
-  border-radius:11px;padding:16px 18px;border:1px solid transparent;
-  transition:.2s cubic-bezier(.2,.8,.2,1);
-}
+.estado{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;gap:10px;margin:0}
+.estado .seta{display:flex;align-items:center;color:#b9c8cd;font-size:1.1rem;user-select:none}
+.chip{display:flex;flex-direction:column;text-decoration:none;color:inherit;
+  border-radius:11px;padding:15px 17px 16px;border:1px solid transparent;
+  transition:.2s cubic-bezier(.2,.8,.2,1)}
 .chip:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(11,45,61,.1)}
-.chip .n{font-family:var(--display);font-weight:700;font-size:1.85rem;line-height:1;display:block}
-.chip .r{
-  display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
-  text-transform:uppercase;margin-top:7px;
+.chip .passo{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  opacity:.6;margin-bottom:8px}
+.chip .n{font-family:var(--display);font-weight:700;font-size:1.95rem;line-height:1;display:block}
+.chip .r{display:block;font-size:.92rem;font-weight:700;margin-top:7px}
+.chip .d{display:block;font-size:.78rem;line-height:1.42;margin-top:4px;opacity:.78}
+.chip.vazio{opacity:.52}
+.chip.pede{box-shadow:0 0 0 2px rgba(65,107,56,.35);}
+.rodape-estado{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.rodape-estado .chip{flex-direction:row;align-items:baseline;gap:11px;padding:12px 16px}
+.rodape-estado .chip .n{font-size:1.3rem}
+.rodape-estado .chip .r{margin-top:0;font-size:.84rem;font-weight:600}
+.chip.recusa{background:#f4e9e7;border-color:#e2c9c4}
+.chip.recusa .n{color:#7c342c} .chip.recusa .r{color:#7c342c}
+@media(max-width:760px){
+  .estado{grid-template-columns:1fr}
+  .estado .seta{display:none}
 }
 .chip.aguarda{background:#fbe9e7;border-color:#f0cdc8}
 .chip.aguarda .n{color:var(--vermelhao)} .chip.aguarda .r{color:#8f3d35}
@@ -434,10 +442,36 @@ body{
   <p class="rotulo">Acompanhamento</p>
 
   <div class="estado">
-    <a class="chip aguarda" href="#" onclick="return false"><span class="n">2</span><span class="r">Aguardando</span></a>
-    <a class="chip preparo" href="#" onclick="return false"><span class="n">1</span><span class="r">Em preparo</span></a>
-    <a class="chip pronto" href="#" onclick="return false"><span class="n">1</span><span class="r">Pronto para baixar</span></a>
-    <a class="chip total" href="#" onclick="return false"><span class="n">12</span><span class="r">Concluídos no ano</span></a>
+    <a class="chip aguarda" href="#" onclick="return false">
+      <span class="passo">Etapa 1</span>
+      <span class="n">0</span>
+      <span class="r">Aguardando</span>
+      <span class="d">Na fila da Secretaria Geral</span>
+    </a>
+    <span class="seta">→</span>
+    <a class="chip preparo" href="#" onclick="return false">
+      <span class="passo">Etapa 2</span>
+      <span class="n">0</span>
+      <span class="r">Em preparo</span>
+      <span class="d">Documento sendo redigido</span>
+    </a>
+    <span class="seta">→</span>
+    <a class="chip pronto" href="#" onclick="return false">
+      <span class="passo">Etapa 3</span>
+      <span class="n">0</span>
+      <span class="r">Pronto</span>
+      <span class="d">Arquivo disponível para baixar</span>
+    </a>
+  </div>
+  <div class="rodape-estado">
+    <a class="chip total" href="#" onclick="return false">
+      <span class="n">0</span>
+      <span class="r">Concluídos no ano</span>
+    </a>
+    <a class="chip recusa" href="#" onclick="return false">
+      <span class="n">0</span>
+      <span class="r">Recusados</span>
+    </a>
   </div>
 
   <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante</p>
@@ -574,6 +608,8 @@ function pintarBarra(){
 /* ---------- o que aparece conforme a sessão ---------- */
 function pintarConteudo(){
   const estado = el('.estado');
+  const rodEstado = el('.rodape-estado');
+  if(rodEstado) rodEstado.style.display = (!!usuario && SOLICITACOES_ATIVAS) ? '' : 'none';
   const rotAcomp = [...document.querySelectorAll('.rotulo')]
     .find(r => r.textContent.trim() === 'Acompanhamento');
   const mostrarAcomp = !!usuario && SOLICITACOES_ATIVAS;
@@ -999,15 +1035,23 @@ async function baixarDocumento(caminho, nome){
 async function contarSolicitacoes(){
   if(!sb || !usuario) return;
   const alvos = [['.chip.aguarda','aguardando'],['.chip.preparo','preparo'],
-                 ['.chip.pronto','pronto']];
+                 ['.chip.pronto','pronto'],['.chip.recusa','recusado']];
   for(const [sel, sit] of alvos){
     const r = await sb.from('solicitacoes').select('id', { count:'exact', head:true }).eq('situacao', sit);
-    const c = el(sel + ' .n'); if(c) c.textContent = r.error ? '0' : (r.count || 0);
+    const n = r.error ? 0 : (r.count || 0);
+    const cx = el(sel), c = el(sel + ' .n');
+    if(c) c.textContent = n;
+    if(cx) cx.classList.toggle('vazio', n === 0);
   }
+  const pr = el('.chip.pronto');
+  if(pr) pr.classList.toggle('pede', !pr.classList.contains('vazio'));
   const ano = new Date().getFullYear();
   const t = await sb.from('solicitacoes').select('id', { count:'exact', head:true })
     .gte('criado_em', ano + '-01-01');
-  const ct = el('.chip.total .n'); if(ct) ct.textContent = t.error ? '0' : (t.count || 0);
+  const ct = el('.chip.total .n');
+  if(ct) ct.textContent = t.error ? '0' : (t.count || 0);
+  const cxt = el('.chip.total');
+  if(cxt) cxt.classList.toggle('vazio', !t.error && (t.count || 0) === 0);
 }
 
 /* ---------- ligações ---------- */
@@ -1020,8 +1064,8 @@ document.querySelectorAll('.chip').forEach(c => {
   c.addEventListener('click', ev => {
     ev.preventDefault();
     if(!usuario) return abrirLogin('Entre para acompanhar as solicitações.');
-    const m = c.className.match(/chip (aguarda|preparo|pronto|total)/);
-    const mapa = { aguarda:'aguardando', preparo:'preparo', pronto:'pronto', total:null };
+    const m = c.className.match(/chip (aguarda|preparo|pronto|recusa|total)/);
+    const mapa = { aguarda:'aguardando', preparo:'preparo', pronto:'pronto', recusa:'recusado', total:null };
     abrirLista(m ? mapa[m[1]] : null);
   });
 });
