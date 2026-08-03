@@ -342,8 +342,8 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
 .linha-ped .txt{flex:1;min-width:170px}
 .linha-ped .txt b{display:block;font-family:var(--display);font-size:1.05rem;color:var(--marinho)}
 .linha-ped .txt span{display:block;font-size:.82rem;color:var(--suave);margin-top:2px}
-.linha-ped .txt span b{color:var(--texto);font-weight:600}
-body[data-tema="dark"] .linha-ped .txt span b{color:#cfe0e6}
+.linha-ped .txt span .autor{display:inline!important;font-weight:700;color:var(--texto);font-family:var(--sans);font-size:inherit}
+body[data-tema="dark"] .linha-ped .txt span .autor{color:#cfe0e6}
 .linha-ped .dest{display:block;font-size:.82rem;color:var(--azul);font-weight:600;margin-top:3px}
 .linha-ped .motivo{flex-basis:100%;font-size:.82rem;color:var(--vermelhao);margin-top:2px}
 .eti{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
@@ -579,7 +579,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v12 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v14 · 03.08.2026</span></p>
 </div>
 
 
@@ -1147,13 +1147,23 @@ ligarMascara('#fmFone', mascaraFone);
 /* ---------- lista ---------- */
 
 
+const FUNCAO_BONITA = {
+  'Secretario de Congregacao': 'Secretário de Congregação',
+  'Secretario de Setor': 'Secretário de Setor',
+  'Secretaria Geral': 'Secretaria Geral',
+  'Leitor': 'Leitor'
+};
+
 function linhaAutor(s){
   const nome = s.autor_nome || '—';
-  const funcao = s.autor_funcao || '';
-  const onde = s.autor_congregacao || s.autor_setor || '';
-  let t = 'por <b>' + nome + '</b>';
+  const bruta = s.autor_funcao || '';
+  const funcao = FUNCAO_BONITA[bruta] || bruta;
+  let onde = s.autor_congregacao || '';
+  if(!onde && /congrega/i.test(bruta)) onde = s.congregacao || '';
+  if(!onde) onde = s.autor_setor || (/setor/i.test(bruta) ? (s.setor || '') : '');
+  let t = 'por <span class="autor">' + nome + '</span>';
   if(funcao) t += ' · ' + funcao;
-  if(onde) t += ' (' + onde + ')';
+  if(onde) t += ' · ' + onde;
   return t;
 }
 
