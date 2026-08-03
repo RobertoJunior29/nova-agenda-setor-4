@@ -185,6 +185,89 @@ body{
 
 
 
+
+/* ===================== MODO ESCURO ===================== */
+body[data-tema="dark"]{background:#0f1b21;color:#e2ecf0}
+body[data-tema="dark"] .barra{color:#8ea6b0}
+body[data-tema="dark"] .barra b{color:#7fd0ea}
+body[data-tema="dark"] .barra a{color:#8ea6b0}
+body[data-tema="dark"] .barra .sair{border-color:#2a3c45;color:#93a8b1}
+body[data-tema="dark"] .barra .funcao{background:#172b35;color:#8fc0d4}
+
+body[data-tema="dark"] .hero{
+  background:
+    radial-gradient(70% 100% at 50% -18%, rgba(28,123,166,.3), transparent 66%),
+    radial-gradient(46% 70% at 92% 108%, rgba(200,178,115,.22), transparent 62%),
+    linear-gradient(170deg,#f4f8f8 8%, #d9e7ee 100%);
+  border-color:#2b4351;box-shadow:0 18px 44px rgba(0,0,0,.4)}
+
+body[data-tema="dark"] .rotulo{color:#c3a558}
+body[data-tema="dark"] .rotulo::after{background:#24343c}
+
+body[data-tema="dark"] .doc{background:#16242b;border-color:#24343c;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+body[data-tema="dark"] .doc:hover{box-shadow:0 20px 40px rgba(0,0,0,.45)}
+body[data-tema="dark"] .doc .txt b{color:#e6f0f4}
+body[data-tema="dark"] .doc .txt p{color:#93a8b1}
+body[data-tema="dark"] .doc.c1 .ir{color:#6cc0e0}
+body[data-tema="dark"] .doc.c2 .ir{color:#d5b364}
+body[data-tema="dark"] .doc.c3 .ir{color:#7fbb6d}
+
+body[data-tema="dark"] .chip.aguarda{background:#2a1614;border-color:#4d2b26}
+body[data-tema="dark"] .chip.aguarda .n{color:#ff9d94} body[data-tema="dark"] .chip.aguarda .r,
+body[data-tema="dark"] .chip.aguarda .d,body[data-tema="dark"] .chip.aguarda .passo{color:#e0a49c}
+body[data-tema="dark"] .chip.preparo{background:#2c2415;border-color:#54441f}
+body[data-tema="dark"] .chip.preparo .n{color:#f0b56a} body[data-tema="dark"] .chip.preparo .r,
+body[data-tema="dark"] .chip.preparo .d,body[data-tema="dark"] .chip.preparo .passo{color:#dcb381}
+body[data-tema="dark"] .chip.pronto{background:#122a1c;border-color:#2b5138}
+body[data-tema="dark"] .chip.pronto .n{color:#82d093} body[data-tema="dark"] .chip.pronto .r,
+body[data-tema="dark"] .chip.pronto .d,body[data-tema="dark"] .chip.pronto .passo{color:#a3c8ad}
+body[data-tema="dark"] .chip.total{background:#132832;border-color:#2a4553}
+body[data-tema="dark"] .chip.total .n{color:#77c2e2} body[data-tema="dark"] .chip.total .r{color:#9dbecd}
+body[data-tema="dark"] .chip.recusa{background:#251716;border-color:#4a2c28}
+body[data-tema="dark"] .chip.recusa .n,body[data-tema="dark"] .chip.recusa .r{color:#e59a92}
+body[data-tema="dark"] .estado .seta{color:#3d5561}
+
+body[data-tema="dark"] .nota.acao{background:#2a1614;border-color:#4d2b26;color:#e5a49c}
+body[data-tema="dark"] .nota.espera{background:#2c2415;border-color:#54441f;color:#dcb381}
+body[data-tema="dark"] .nota.acao .ir{color:#ff9d94}
+body[data-tema="dark"] .nota.espera .ir{color:#f0b56a}
+body[data-tema="dark"] .selo-nota{border-color:#0f1b21}
+
+body[data-tema="dark"] .rodape{color:#7c959f}
+
+body[data-tema="dark"] .tela .caixa,body[data-tema="dark"] #login .cartao{background:#16242b;color:#e2ecf0}
+body[data-tema="dark"] .tela h2,body[data-tema="dark"] #login h2{color:#7fd0ea}
+body[data-tema="dark"] .tela .sub,body[data-tema="dark"] #login .sub,
+body[data-tema="dark"] .campo label,body[data-tema="dark"] .campo .dica{color:#93a8b1}
+body[data-tema="dark"] .campo input,body[data-tema="dark"] .campo select,
+body[data-tema="dark"] .campo textarea,body[data-tema="dark"] #login input{
+  background:#1b2c34;border-color:#2a3c45;color:#e2ecf0}
+body[data-tema="dark"] .campo .fixo{background:#22343d;color:#8ea6b0}
+body[data-tema="dark"] .opc{background:#1b2c34;border-color:#2a3c45;color:#cfe0e6}
+body[data-tema="dark"] .opc.on{background:#173341;border-color:#2f7fa0;color:#cfe9f4}
+body[data-tema="dark"] .fim,body[data-tema="dark"] .linha-ped{border-color:#24343c}
+body[data-tema="dark"] .linha-ped{background:#16242b}
+body[data-tema="dark"] .linha-ped .txt b{color:#e6f0f4}
+body[data-tema="dark"] .linha-ped .txt span{color:#93a8b1}
+body[data-tema="dark"] .bt.vazio{border-color:#2a3c45;color:#93a8b1}
+body[data-tema="dark"] .aviso-form{background:#2c2415;border-color:#54441f;color:#e0c68e}
+body[data-tema="dark"] .ok-bloco .num{background:#132832;color:#77c2e2}
+body[data-tema="dark"] .ok-bloco .selo{background:#122a1c}
+body[data-tema="dark"] .vazio-lista{color:#8ea6b0}
+body[data-tema="dark"] .fechar{color:#8ea6b0}
+body[data-tema="dark"] .eti.aguardando{background:#2a1614;color:#e59a92}
+body[data-tema="dark"] .eti.preparo{background:#2c2415;color:#e0b382}
+body[data-tema="dark"] .eti.pronto{background:#122a1c;color:#8ecf9e}
+body[data-tema="dark"] .eti.entregue{background:#132832;color:#8fc0d4}
+body[data-tema="dark"] .eti.recusado{background:#251716;color:#e59a92}
+
+.bt-tema{font-family:var(--sans);font-size:.86rem;padding:6px 12px;border-radius:999px;
+  border:1px solid var(--linha);background:transparent;color:var(--suave);cursor:pointer;line-height:1;
+  margin-right:8px}
+.bt-tema:hover{border-color:var(--louro);color:var(--marinho)}
+body[data-tema="dark"] .bt-tema{border-color:#2a3c45;color:#c3a558}
+body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
+
 /* ---------- telas sobrepostas ---------- */
 .tela{position:fixed;inset:0;z-index:70;display:none;padding:18px;overflow-y:auto;
   background:rgba(8,34,47,.8);backdrop-filter:blur(4px)}
@@ -475,7 +558,7 @@ body{
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v4 · 31.07.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v5 · 03.08.2026</span></p>
 </div>
 
 
@@ -584,6 +667,27 @@ let sb = null, usuario = null, perfil = null;
 
 function el(s){ return document.querySelector(s); }
 
+
+/* ---------- tema claro / escuro ---------- */
+function aplicarTema(t){
+  if(t === 'dark') document.body.setAttribute('data-tema','dark');
+  else document.body.removeAttribute('data-tema');
+  const b = el('#btTema');
+  if(b){
+    b.textContent = (t === 'dark') ? '\u2600' : '\ud83c\udf19';
+    b.title = (t === 'dark') ? 'Modo claro' : 'Modo escuro';
+  }
+}
+function temaAtual(){
+  try{ return localStorage.getItem('tema') || 'claro'; }catch(e){ return 'claro'; }
+}
+function alternarTema(){
+  const novo = (temaAtual() === 'dark') ? 'claro' : 'dark';
+  try{ localStorage.setItem('tema', novo); }catch(e){}
+  aplicarTema(novo);
+}
+aplicarTema(temaAtual());
+
 /* ---------- barra de identificação ---------- */
 function pintarBarra(){
   const b = el('.barra');
@@ -595,13 +699,19 @@ function pintarBarra(){
     b.innerHTML =
       '<span>' + (onde ? onde + ' \u2014 ' : '') + '<b>' + nome + '</b>' +
       (papel ? '<span class="funcao">' + papel + '</span>' : '') + '</span>' +
+      '<button type="button" class="bt-tema" id="btTema"></button>' +
       '<button type="button" class="sair" id="btSair">Sair</button>';
     el('#btSair').onclick = sair;
+    el('#btTema').onclick = alternarTema;
+    aplicarTema(temaAtual());
   } else {
     b.innerHTML =
       '<span>Secretaria IEADESGA</span>' +
+      '<button type="button" class="bt-tema" id="btTema"></button>' +
       '<button type="button" class="entrar" id="btEntrar">Entrar</button>';
     el('#btEntrar').onclick = function(){ abrirLogin(); };
+    el('#btTema').onclick = alternarTema;
+    aplicarTema(temaAtual());
   }
   pintarConteudo();
 }
