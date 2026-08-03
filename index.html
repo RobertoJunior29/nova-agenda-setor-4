@@ -201,6 +201,22 @@ body[data-tema="dark"] .forma-recusa label{color:#e0c68e}
 body[data-tema="dark"] .forma-recusa textarea{background:#1b2c34;color:#e2ecf0;border-color:#54441f}
 body[data-tema="dark"] .acoes-ped{border-color:#24343c}
 
+
+.busca-prot{margin-top:14px}
+.busca-prot label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--louro-forte);margin-bottom:8px}
+.busca-linha{display:flex;gap:9px;flex-wrap:wrap}
+.busca-linha input{flex:1;min-width:170px;font-family:var(--mono);font-size:1rem;letter-spacing:.08em;
+  padding:12px 14px;border:1px solid var(--linha);border-radius:9px;background:var(--branco);color:var(--texto)}
+.busca-linha input:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 3px rgba(11,79,108,.1)}
+.dica-prot{display:block;font-size:11.5px;color:var(--suave);margin-top:7px;line-height:1.45}
+.dica-prot.ruim{color:var(--vermelhao)}
+body[data-tema="dark"] .busca-linha input{background:#16242b;border-color:#2a3c45;color:#e2ecf0}
+body[data-tema="dark"] .busca-prot label{color:#c3a558}
+.nota.bom{background:var(--verde-fundo);border-color:#cbdfc4;color:#3a6132}
+.nota.bom .ponto{background:#416b38} .nota.bom .ir{color:#3a6132}
+body[data-tema="dark"] .nota.bom{background:#122a1c;border-color:#2b5138;color:#a3c8ad}
+body[data-tema="dark"] .nota.bom .ir{color:#82d093}
 .status-ped{margin-top:10px;padding:9px 12px;border-radius:8px;font-size:.85rem;line-height:1.5;
   background:var(--azul-fundo);color:#3d6478;border:1px solid #c6dce8}
 .status-ped.bom{background:var(--verde-fundo);color:#3a6132;border-color:#cbdfc4}
@@ -587,7 +603,17 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v16 · 03.08.2026</span></p>
+
+  <div class="busca-prot">
+    <label for="protBusca">Consultar protocolo</label>
+    <div class="busca-linha">
+      <input id="protBusca" placeholder="2026/0001" spellcheck="false" autocomplete="off">
+      <button type="button" class="bt" id="protBt">Buscar</button>
+    </div>
+    <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
+  </div>
+
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v17 · 03.08.2026</span></p>
 </div>
 
 
@@ -888,6 +914,70 @@ async function carregarPerfil(){
 }
 
 
+
+/* ---------- consulta por protocolo ---------- */
+function normalizarProtocolo(v){
+  const d = String(v || '').replace(/\D/g, '');
+  if(d.length < 5) return null;
+  return d.slice(0, 4) + '/' + d.slice(4).padStart(4, '0').slice(-4);
+}
+
+async function buscarProtocolo(){
+  const inp = el('#protBusca'), dica = el('#protDica');
+  const p = normalizarProtocolo(inp.value);
+  if(!p){
+    dica.className = 'dica-prot ruim';
+    dica.textContent = 'Informe o número completo, no formato 2026/0001.';
+    return;
+  }
+  if(!usuario){ abrirLogin('Entre para consultar um protocolo.'); return; }
+  inp.value = p;
+  dica.className = 'dica-prot';
+  dica.textContent = 'Buscando ' + p + '...';
+  await abrirLista(null, p);
+  dica.textContent = 'Digite o número que aparece no comprovante do pedido.';
+}
+
+el('#protBt').onclick = buscarProtocolo;
+el('#protBusca').addEventListener('keydown', e => { if(e.key === 'Enter') buscarProtocolo(); });
+
+/* ---------- notificações dos documentos ---------- */
+async function notasSolicitacoes(){
+  if(!sb || !usuario || !perfil) return [];
+  const itens = [];
+  async function contar(sit){
+    const r = await sb.from('solicitacoes').select('id', { count:'exact', head:true }).eq('situacao', sit);
+    return r.error ? 0 : (r.count || 0);
+  }
+
+  if(perfil.papel === 'admin'){
+    const ag = await contar('aguardando');
+    if(ag) itens.push({ tipo:'acao', filtro:'aguardando',
+      txt: '<b>' + ag + ' solicita\u00e7\u00e3o' + (ag>1?'\u00f5es':'') + '</b> de documento aguardando sua an\u00e1lise.',
+      ir: 'Analisar \u2192' });
+    const pr = await contar('preparo');
+    if(pr) itens.push({ tipo:'espera', filtro:'preparo',
+      txt: '<b>' + pr + ' documento' + (pr>1?'s':'') + '</b> em preparo com voc\u00ea.',
+      ir: 'Ver \u2192' });
+  } else {
+    const rec = await contar('recusado');
+    if(rec) itens.push({ tipo:'acao', filtro:'recusado',
+      txt: '<b>' + rec + ' pedido' + (rec>1?'s':'') + '</b> de documento ' +
+           (rec>1?'foram recusados':'foi recusado') + '. Veja o motivo.',
+      ir: 'Ver motivo \u2192' });
+    const pron = await contar('pronto');
+    if(pron) itens.push({ tipo:'bom', filtro:'pronto',
+      txt: '<b>' + pron + ' documento' + (pron>1?'s prontos':' pronto') + '</b> para baixar.',
+      ir: 'Baixar \u2192' });
+    const ag = await contar('aguardando');
+    const pre = await contar('preparo');
+    if(ag + pre) itens.push({ tipo:'espera', filtro: ag ? 'aguardando' : 'preparo',
+      txt: '<b>' + (ag+pre) + ' pedido' + ((ag+pre)>1?'s':'') + '</b> em andamento na Secretaria Geral.',
+      ir: 'Acompanhar \u2192' });
+  }
+  return itens;
+}
+
 /* ---------- notificações vindas da agenda ---------- */
 async function carregarNotas(){
   const cx = el('#notas'), selo = el('#seloAgenda');
@@ -929,13 +1019,20 @@ async function carregarNotas(){
     });
   }
 
+  const docs = await notasSolicitacoes();
+  docs.forEach(d => itens.push(d));
   const acoes = itens.filter(i => i.tipo === 'acao').length;
   if(selo && acoes){ selo.textContent = String(acoes); selo.classList.add('ver'); }
 
   itens.forEach(i => {
     const a = document.createElement('a');
     a.className = 'nota ' + i.tipo;
-    a.href = i.alvo || 'agenda.html';
+    if(i.filtro){
+      a.href = '#';
+      a.onclick = ev => { ev.preventDefault(); abrirLista(i.filtro); };
+    } else {
+      a.href = i.alvo || 'agenda.html';
+    }
     a.innerHTML = '<span class="ponto"></span>' +
                   '<span class="txt">' + i.txt + '</span>' +
                   '<span class="ir">' + i.ir + '</span>';
@@ -1200,23 +1297,31 @@ function textoDestino(s){
 const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto',
                      entregue:'Entregue', recusado:'Recusado' };
 
-let filtroAtual = null;
-async function abrirLista(filtro){
+let filtroAtual = null, protAtual = null;
+async function abrirLista(filtro, protocolo){
   filtroAtual = filtro || null;
+  protAtual = protocolo || null;
   el('#telaLista').classList.add('ver');
   const cx = el('#lsCorpo');
   cx.innerHTML = '<p class="vazio-lista">Carregando...</p>';
   const admin = perfil && perfil.papel === 'admin';
-  el('#lsTitulo').textContent = admin ? 'Solicitações' : 'Meus pedidos';
+  el('#lsTitulo').textContent = protAtual ? ('Protocolo ' + protAtual)
+    : (admin ? 'Solicitações' : 'Meus pedidos');
   el('#lsSub').textContent = admin
     ? 'Pedidos enviados pelos secretários das congregações.'
     : 'Solicitações que você enviou.';
 
   let q = sb.from('solicitacoes').select('*').order('criado_em', { ascending:false });
-  if(filtro) q = q.eq('situacao', filtro);
+  if(protAtual) q = q.eq('protocolo', protAtual);
+  else if(filtro) q = q.eq('situacao', filtro);
   const r = await q;
   if(r.error){ cx.innerHTML = '<p class="vazio-lista">Erro: ' + r.error.message + '</p>'; return; }
-  if(!r.data.length){ cx.innerHTML = '<p class="vazio-lista">Nenhuma solicitação por aqui.</p>'; return; }
+  if(!r.data.length){
+    cx.innerHTML = '<p class="vazio-lista">' + (protAtual
+      ? 'Nenhum pedido com o protocolo ' + protAtual + '. Confira o número, ou peça à Secretaria Geral.'
+      : 'Nenhuma solicitação por aqui.') + '</p>';
+    return;
+  }
 
   cx.innerHTML = '';
   r.data.forEach(s => {
