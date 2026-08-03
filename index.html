@@ -261,9 +261,9 @@ body[data-tema="dark"] .eti.pronto{background:#122a1c;color:#8ecf9e}
 body[data-tema="dark"] .eti.entregue{background:#132832;color:#8fc0d4}
 body[data-tema="dark"] .eti.recusado{background:#251716;color:#e59a92}
 
+.acoes-barra{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .bt-tema{font-family:var(--sans);font-size:.86rem;padding:6px 12px;border-radius:999px;
-  border:1px solid var(--linha);background:transparent;color:var(--suave);cursor:pointer;line-height:1;
-  margin-right:8px}
+  border:1px solid var(--linha);background:transparent;color:var(--suave);cursor:pointer;line-height:1}
 .bt-tema:hover{border-color:var(--louro);color:var(--marinho)}
 body[data-tema="dark"] .bt-tema{border-color:#2a3c45;color:#c3a558}
 body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
@@ -558,7 +558,7 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v5 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v6 · 03.08.2026</span></p>
 </div>
 
 
@@ -699,16 +699,20 @@ function pintarBarra(){
     b.innerHTML =
       '<span>' + (onde ? onde + ' \u2014 ' : '') + '<b>' + nome + '</b>' +
       (papel ? '<span class="funcao">' + papel + '</span>' : '') + '</span>' +
-      '<button type="button" class="bt-tema" id="btTema"></button>' +
-      '<button type="button" class="sair" id="btSair">Sair</button>';
+      '<span class="acoes-barra">' +
+        '<button type="button" class="bt-tema" id="btTema"></button>' +
+        '<button type="button" class="sair" id="btSair">Sair</button>' +
+      '</span>';
     el('#btSair').onclick = sair;
     el('#btTema').onclick = alternarTema;
     aplicarTema(temaAtual());
   } else {
     b.innerHTML =
       '<span>Secretaria IEADESGA</span>' +
-      '<button type="button" class="bt-tema" id="btTema"></button>' +
-      '<button type="button" class="entrar" id="btEntrar">Entrar</button>';
+      '<span class="acoes-barra">' +
+        '<button type="button" class="bt-tema" id="btTema"></button>' +
+        '<button type="button" class="entrar" id="btEntrar">Entrar</button>' +
+      '</span>';
     el('#btEntrar').onclick = function(){ abrirLogin(); };
     el('#btTema').onclick = alternarTema;
     aplicarTema(temaAtual());
