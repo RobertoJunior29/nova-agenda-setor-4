@@ -514,41 +514,24 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
 
   <div class="docs">
 
-    <a class="doc c1" href="#" onclick="return false">
+    <a class="doc c1" data-tipo="Cartas" href="#" onclick="return false">
       <span class="capa">
         <svg width="40" height="40" viewBox="0 0 46 46" fill="none">
           <rect x="3" y="10" width="40" height="27" rx="2.5" stroke="#fff" stroke-width="1.9"/>
           <path d="M3.6 11.6 23 25.4l19.4-13.8" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/>
           <circle cx="37" cy="33" r="7.5" fill="#c8b273"/>
-          <path d="M33.6 33.2l2.4 2.4 4.4-4.8" stroke="#0b2d3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="prazo">até 3 dias</span>
-      </span>
-      <span class="txt">
-        <b>Carta de recomendação</b>
-        <p>Atesta que o membro está em plena comunhão, para apresentar em outra igreja ou ministério.</p>
-        <span class="ir">Solicitar →</span>
-      </span>
-    </a>
-
-    <a class="doc c2" href="#" onclick="return false">
-      <span class="capa">
-        <svg width="40" height="40" viewBox="0 0 46 46" fill="none">
-          <path d="M8 5h20l10 10v26a1.6 1.6 0 0 1-1.6 1.6H8A1.6 1.6 0 0 1 6.4 41V6.6A1.6 1.6 0 0 1 8 5Z" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/>
-          <path d="M28 5v10h10" stroke="#fff" stroke-width="1.9" stroke-linejoin="round"/>
-          <path d="M14 26h13m-13 6h16" stroke="#e8d9a8" stroke-width="2" stroke-linecap="round"/>
-          <path d="M27.5 20.5 32 25l-4.5 4.5" stroke="#f5cf8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M33.6 33.2l2.4 2.4 4.4-4.8" stroke="#08222f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <span class="prazo">até 5 dias</span>
       </span>
       <span class="txt">
-        <b>Carta de mudança</b>
-        <p>Transferência da membresia para outra congregação, dentro ou fora do campo.</p>
+        <b>Cartas</b>
+        <p>Carta de recomendação para outra igreja, ou carta de mudança de membresia.</p>
         <span class="ir">Solicitar →</span>
       </span>
     </a>
 
-    <a class="doc c3" href="#" onclick="return false">
+    <a class="doc c3" data-tipo="Ficha cadastral" href="#" onclick="return false">
       <span class="capa">
         <svg width="40" height="40" viewBox="0 0 46 46" fill="none">
           <rect x="5" y="7" width="36" height="32" rx="2.5" stroke="#fff" stroke-width="1.9"/>
@@ -613,7 +596,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v18 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v19 · 03.08.2026</span></p>
 </div>
 
 
@@ -622,6 +605,16 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
 <div class="tela" id="telaForm"><div class="caixa">
   <div class="cabeca"><h2 id="fmTitulo">Solicitar</h2><button type="button" class="fechar" id="fmX">&times;</button></div>
   <p class="sub">Preencha os dados do membro. A Secretaria Geral confere com o cadastro antes de emitir.</p>
+  <div id="blocoTipoCarta" style="display:none;margin-bottom:18px">
+    <div class="campo largo">
+      <label>Tipo de carta *</label>
+      <div class="opcoes">
+        <label class="opc"><input type="radio" name="tipocarta" value="Carta de recomendação"> Carta de recomendação</label>
+        <label class="opc"><input type="radio" name="tipocarta" value="Carta de mudança"> Carta de mudança</label>
+      </div>
+      <span class="dica" id="dicaTipoCarta">A de recomendação atesta comunhão; a de mudança transfere a membresia.</span>
+    </div>
+  </div>
   <div class="grade">
     <div class="campo largo"><label>Nome completo do membro *</label>
       <input id="fmNome" placeholder="Como consta no cadastro de membros"></div>
@@ -869,7 +862,7 @@ document.querySelectorAll('.doc').forEach(d => {
     } else if(!usuario){
       abrirLogin('Entre com sua conta para solicitar documentos.');
     } else {
-      abrirForm(d.querySelector('.txt b').textContent.trim());
+      abrirForm(d.getAttribute('data-tipo') || d.querySelector('.txt b').textContent.trim());
     }
   });
 });
@@ -1129,24 +1122,36 @@ function montarCamposDestino(tipo){
   }
 }
 
-function abrirForm(tipo){
+function ajustarPorTipo(tipo){
   tipoAtual = tipo;
-  el('#fmTitulo').textContent = tipo;
+  const bd = el('#blocoDestino');
+  bd.style.display = (tipo === 'Carta de recomendação') ? '' : 'none';
+  const det = el('#blocoDetalhe');
+  if(tipo === 'Carta de mudança'){
+    det.style.display = '';
+    el('#lbDetalhe').textContent = 'Congregação de destino';
+    el('#fmDetalhe').placeholder = 'Para onde a membresia será transferida';
+  } else {
+    det.style.display = 'none';
+  }
+}
+
+function abrirForm(tipo){
+  const ehCarta = (tipo === 'Cartas');
+  tipoAtual = ehCarta ? '' : tipo;
+  el('#fmTitulo').textContent = ehCarta ? 'Solicitar carta' : tipo;
+  el('#blocoTipoCarta').style.display = ehCarta ? '' : 'none';
+  document.querySelectorAll('input[name=tipocarta]').forEach(r => {
+    r.checked = false; r.closest('.opc').classList.remove('on');
+  });
   ['#fmNome','#fmDoc','#fmFone','#fmDetalhe','#fmObs'].forEach(s => { if(el(s)) el(s).value = ''; });
   el('#fmErro').textContent = '';
   montarSetorCongr();
 
-  const bd = el('#blocoDestino');
-  bd.style.display = (tipo === 'Carta de recomendação') ? '' : 'none';
   document.querySelectorAll('input[name=dest]').forEach(r => { r.checked = false;
     r.closest('.opc').classList.remove('on'); });
   el('#camposDestino').innerHTML = '';
-
-  const det = el('#blocoDetalhe');
-  if(tipo === 'Carta de mudança'){
-    det.style.display = ''; el('#lbDetalhe').textContent = 'Congregação de destino';
-    el('#fmDetalhe').placeholder = 'Para onde a membresia será transferida';
-  } else { det.style.display = 'none'; }
+  ajustarPorTipo(ehCarta ? '' : tipo);
 
   el('#telaForm').classList.add('ver');
   setTimeout(() => el('#fmNome').focus(), 70);
@@ -1160,11 +1165,22 @@ document.querySelectorAll('input[name=dest]').forEach(r => {
   });
 });
 
+
+document.querySelectorAll('input[name=tipocarta]').forEach(r => {
+  r.addEventListener('change', () => {
+    document.querySelectorAll('input[name=tipocarta]').forEach(x =>
+      x.closest('.opc').classList.toggle('on', x.checked));
+    el('#fmTitulo').textContent = r.value;
+    ajustarPorTipo(r.value);
+  });
+});
+
 function valor(id){ const e = el(id); return e ? e.value.trim() : ''; }
 
 async function enviarSolicitacao(){
   const er = el('#fmErro'), bt = el('#fmEnviar');
   if(!sb || !usuario){ er.textContent = 'Entre com sua conta para solicitar.'; return; }
+  if(!tipoAtual){ er.textContent = 'Escolha o tipo de carta.'; return; }
   if(!valor('#fmNome')){ er.textContent = 'Informe o nome completo do membro.'; el('#fmNome').focus(); return; }
   if(!valor('#fmCongr')){ er.textContent = 'Escolha a congregação.'; return; }
 
