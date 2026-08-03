@@ -613,7 +613,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v17 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v18 · 03.08.2026</span></p>
 </div>
 
 
@@ -1324,34 +1324,7 @@ async function abrirLista(filtro, protocolo){
   }
 
   cx.innerHTML = '';
-  r.data.forEach(s => {
-    const d = new Date(s.criado_em);
-    const quando = isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' às ' +
-      d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-    const div = document.createElement('div');
-    div.className = 'linha-ped';
-    let html = '<span class="cod">' + (s.protocolo || '—') + '</span>' +
-      '<span class="txt"><b>' + s.tipo + '</b>' +
-      '<span>' + s.membro_nome + ' · ' + s.congregacao + '</span>' +
-      (textoDestino(s) ? '<span class="dest">' + textoDestino(s) + '</span>' : '') +
-      '<span>' + linhaAutor(s) + ' · ' + quando + '</span></span>' +
-      '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
-    if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
-    div.setAttribute('data-ped', s.id);
-    div.innerHTML = '<div class="topo-ped">' + html + '</div>';
-    const topo = div.querySelector('.topo-ped');
-    if((s.situacao === 'pronto' || s.situacao === 'entregue') && s.arquivo){
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'bt pq ' + (s.situacao === 'pronto' ? 'ouro' : 'vazio');
-      b.textContent = s.situacao === 'pronto' ? 'Baixar' : 'Baixar de novo';
-      b.onclick = () => baixarDocumento(s.arquivo, s.arquivo_nome, s.id, s.situacao);
-      topo.appendChild(b);
-    }
-    if(perfil && perfil.papel === 'admin') acoesSecretaria(div, s);
-    else if(s.situacao === 'recusado' && s.criado_por === usuario.id) acoesAutorPedido(div, s);
-    cx.appendChild(div);
-  });
+  r.data.forEach(s => cx.appendChild(montarLinhaPedido(s)));
 }
 
 async function baixarDocumento(caminho, nome, id, situacao){
@@ -1389,15 +1362,57 @@ async function baixarDocumento(caminho, nome, id, situacao){
   if(id && situacao === 'pronto'){
     const u = await sb.from('solicitacoes').update({ situacao:'entregue' }).eq('id', id).select('id');
     if(!u.error && u.data && u.data.length){
-      statusLinha(id, 'Documento baixado. Pedido concluído.', 'bom');
       contarSolicitacoes(); carregarNotas();
-      setTimeout(() => abrirLista(filtroAtual), 1400);
+      recarregarLinha(id, 'Documento baixado. Pedido concluído.', 'bom');
       return;
     }
   }
   if(id) statusLinha(id, 'Arquivo aberto e baixado.', 'bom');
 }
 
+
+
+/* ---------- uma linha da lista ---------- */
+function montarLinhaPedido(s){
+  const d = new Date(s.criado_em);
+  const quando = isNaN(d) ? '' : d.toLocaleDateString('pt-BR') + ' às ' +
+    d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  const div = document.createElement('div');
+  div.className = 'linha-ped';
+  let html = '<span class="cod">' + (s.protocolo || '—') + '</span>' +
+    '<span class="txt"><b>' + s.tipo + '</b>' +
+    '<span>' + s.membro_nome + ' · ' + s.congregacao + '</span>' +
+    (textoDestino(s) ? '<span class="dest">' + textoDestino(s) + '</span>' : '') +
+    '<span>' + linhaAutor(s) + ' · ' + quando + '</span></span>' +
+    '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
+  if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
+  div.setAttribute('data-ped', s.id);
+  div.innerHTML = '<div class="topo-ped">' + html + '</div>';
+  const topo = div.querySelector('.topo-ped');
+  if((s.situacao === 'pronto' || s.situacao === 'entregue') && s.arquivo){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'bt pq ' + (s.situacao === 'pronto' ? 'ouro' : 'vazio');
+    b.textContent = s.situacao === 'pronto' ? 'Baixar' : 'Baixar de novo';
+    b.onclick = () => baixarDocumento(s.arquivo, s.arquivo_nome, s.id, s.situacao);
+    topo.appendChild(b);
+  }
+  if(perfil && perfil.papel === 'admin') acoesSecretaria(div, s);
+  else if(s.situacao === 'recusado' && usuario && s.criado_por === usuario.id) acoesAutorPedido(div, s);
+  return div;
+}
+
+/* ---------- atualizar só a linha, sem recarregar a lista ---------- */
+async function recarregarLinha(id, aviso, tipoAviso){
+  const antigo = document.querySelector('[data-ped="' + id + '"]');
+  const r = await sb.from('solicitacoes').select('*').eq('id', id).maybeSingle();
+  if(r.error){ statusLinha(id, 'Erro ao reler o pedido: ' + r.error.message, 'ruim'); return; }
+  if(!r.data){ if(antigo) antigo.remove(); return; }
+  const novo = montarLinhaPedido(r.data);
+  if(antigo) antigo.replaceWith(novo);
+  else el('#lsCorpo').appendChild(novo);
+  if(aviso) statusLinha(id, aviso, tipoAviso || 'bom');
+}
 
 /* ===================== AÇÕES DA SECRETARIA GERAL ===================== */
 function acoesSecretaria(div, s){
@@ -1437,9 +1452,11 @@ async function mudarSituacao(id, situacao, extra){
   if(!r.data || !r.data.length){
     statusLinha(id, 'O servidor não autorizou a alteração.', 'ruim'); return;
   }
-  statusLinha(id, 'Situação atualizada.', 'bom');
   contarSolicitacoes(); carregarNotas();
-  setTimeout(() => abrirLista(filtroAtual), 900);
+  const proximo = { preparo: 'Marcado em preparo. O próximo passo é anexar o documento.',
+                    aguardando: 'Pedido reaberto e devolvido à fila.',
+                    recusado: 'Recusa registrada. O solicitante será avisado.' };
+  recarregarLinha(id, proximo[situacao] || 'Situação atualizada.', 'bom');
 }
 
 function pedirArquivo(s){
@@ -1508,9 +1525,8 @@ async function enviarArquivo(inp, s){
     return;
   }
 
-  statusLinha(s.id, 'Documento anexado. O solicitante já pode baixar.', 'bom');
   contarSolicitacoes(); carregarNotas();
-  setTimeout(() => abrirLista(filtroAtual), 1400);
+  recarregarLinha(s.id, 'Documento anexado. O solicitante já pode baixar.', 'bom');
 }
 
 function abrirRecusaPedido(div, s){
@@ -1540,7 +1556,9 @@ async function excluirPedido(s){
   if(r.error){ recado('Erro: ' + r.error.message); return; }
   if(!r.data || !r.data.length){ recado('O servidor não autorizou a exclusão.'); return; }
   recado('Pedido excluído.');
-  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+  const antigo = document.querySelector('[data-ped="' + s.id + '"]');
+  if(antigo) antigo.remove();
+  contarSolicitacoes(); carregarNotas();
 }
 
 /* ---------- o autor cancela um pedido recusado ---------- */
@@ -1557,7 +1575,9 @@ function acoesAutorPedido(div, s){
       return;
     }
     recado('Pedido cancelado.');
-    contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+    const antigo = document.querySelector('[data-ped="' + s.id + '"]');
+    if(antigo) antigo.remove();
+    contarSolicitacoes(); carregarNotas();
   };
 }
 
