@@ -558,7 +558,7 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v6 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v7 · 03.08.2026</span></p>
 </div>
 
 
@@ -603,6 +603,23 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
   <div class="fim">
     <button type="button" class="bt vazio" id="fmCancelar">Cancelar</button>
     <button type="button" class="bt" id="fmEnviar">Enviar solicitação</button>
+  </div>
+</div></div>
+
+
+<div class="tela" id="telaSenha"><div class="caixa" style="max-width:390px">
+  <div class="cabeca"><h2>Trocar minha senha</h2><button type="button" class="fechar" id="snX">&times;</button></div>
+  <p class="sub" id="snQuem"></p>
+  <div class="grade">
+    <div class="campo largo"><label>Nova senha (mínimo 6 caracteres)</label>
+      <input id="snNova" type="password" autocomplete="new-password"></div>
+    <div class="campo largo"><label>Repita a nova senha</label>
+      <input id="snRepete" type="password" autocomplete="new-password"></div>
+  </div>
+  <div class="erro-form" id="snErro"></div>
+  <div class="fim">
+    <button type="button" class="bt vazio" id="snCancelar">Cancelar</button>
+    <button type="button" class="bt" id="snOk">Salvar senha</button>
   </div>
 </div></div>
 
@@ -668,6 +685,37 @@ let sb = null, usuario = null, perfil = null;
 function el(s){ return document.querySelector(s); }
 
 
+
+/* ---------- trocar a própria senha ---------- */
+function abrirTrocaSenha(){
+  if(!sb || !usuario){ abrirLogin('Entre para trocar a senha.'); return; }
+  el('#snQuem').textContent = usuario.email;
+  el('#snNova').value = ''; el('#snRepete').value = ''; el('#snErro').textContent = '';
+  el('#telaSenha').classList.add('ver');
+  setTimeout(() => el('#snNova').focus(), 70);
+}
+
+async function salvarSenha(){
+  const a = el('#snNova'), b = el('#snRepete'), er = el('#snErro'), bt = el('#snOk');
+  if(a.value.length < 6){ er.textContent = 'A senha precisa ter ao menos 6 caracteres.'; a.focus(); return; }
+  if(a.value !== b.value){ er.textContent = 'As duas senhas não são iguais.'; b.value = ''; b.focus(); return; }
+  er.textContent = '';
+  bt.disabled = true; bt.textContent = 'Salvando...';
+  const r = await sb.auth.updateUser({ password: a.value });
+  bt.disabled = false; bt.textContent = 'Salvar senha';
+  if(r.error){ er.textContent = r.error.message; return; }
+  a.value = ''; b.value = '';
+  el('#telaSenha').classList.remove('ver');
+  recado('Senha alterada com sucesso.');
+}
+
+el('#snX').onclick = el('#snCancelar').onclick = () => el('#telaSenha').classList.remove('ver');
+el('#snOk').onclick = salvarSenha;
+el('#telaSenha').addEventListener('keydown', e => {
+  if(e.key === 'Enter') salvarSenha();
+  if(e.key === 'Escape') el('#telaSenha').classList.remove('ver');
+});
+
 /* ---------- tema claro / escuro ---------- */
 function aplicarTema(t){
   if(t === 'dark') document.body.setAttribute('data-tema','dark');
@@ -700,10 +748,12 @@ function pintarBarra(){
       '<span>' + (onde ? onde + ' \u2014 ' : '') + '<b>' + nome + '</b>' +
       (papel ? '<span class="funcao">' + papel + '</span>' : '') + '</span>' +
       '<span class="acoes-barra">' +
+        '<button type="button" class="bt-tema" id="btChave" title="Trocar minha senha">\ud83d\udd11</button>' +
         '<button type="button" class="bt-tema" id="btTema"></button>' +
         '<button type="button" class="sair" id="btSair">Sair</button>' +
       '</span>';
     el('#btSair').onclick = sair;
+    el('#btChave').onclick = abrirTrocaSenha;
     el('#btTema').onclick = alternarTema;
     aplicarTema(temaAtual());
   } else {
@@ -1211,7 +1261,7 @@ function marcarAtividade(){
 
 async function encerrarPorInatividade(){
   try{ localStorage.removeItem(CHAVE_ATIV); }catch(e){}
-  ['#telaForm','#telaOk','#telaLista'].forEach(s => {
+  ['#telaForm','#telaOk','#telaLista','#telaSenha'].forEach(s => {
     const t = el(s); if(t) t.classList.remove('ver');
   });
   if(sb) await sb.auth.signOut();
