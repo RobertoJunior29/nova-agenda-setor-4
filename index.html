@@ -186,6 +186,23 @@ body{
 
 
 
+
+.linha-ped{flex-direction:column;align-items:stretch}
+.linha-ped .topo-ped{display:flex;gap:14px;align-items:center;flex-wrap:wrap;width:100%}
+.acoes-ped{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;padding-top:11px;border-top:1px solid var(--linha)}
+.forma-recusa{margin-top:11px;padding:12px 13px;border:1px solid #f0d79a;background:#fffaf0;border-radius:9px}
+.forma-recusa label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:#8a5b00;margin-bottom:6px}
+.forma-recusa textarea{width:100%;box-sizing:border-box;font-family:var(--sans);font-size:.9rem;
+  padding:8px 10px;border:1px solid #e0c78a;border-radius:7px;resize:vertical;min-height:56px}
+.forma-recusa .bts{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}
+body[data-tema="dark"] .forma-recusa{background:#2c2415;border-color:#54441f}
+body[data-tema="dark"] .forma-recusa label{color:#e0c68e}
+body[data-tema="dark"] .forma-recusa textarea{background:#1b2c34;color:#e2ecf0;border-color:#54441f}
+body[data-tema="dark"] .acoes-ped{border-color:#24343c}
+.bt.verde{background:#3a6132;color:#fff}
+.bt.verde:hover{background:#2e4e28}
+
 /* ===================== MODO ESCURO ===================== */
 body[data-tema="dark"]{background:#0f1b21;color:#e2ecf0}
 body[data-tema="dark"] .barra{color:#8ea6b0}
@@ -562,7 +579,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v10 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v12 · 03.08.2026</span></p>
 </div>
 
 
@@ -611,6 +628,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
 </div></div>
 
 
+<input type="file" id="arqPdf" accept="application/pdf,image/jpeg,image/png" style="display:none">
 <div class="tela" id="telaSenha"><div class="caixa" style="max-width:390px">
   <div class="cabeca"><h2>Trocar minha senha</h2><button type="button" class="fechar" id="snX">&times;</button></div>
   <p class="sub" id="snQuem"></p>
@@ -1164,7 +1182,9 @@ function textoDestino(s){
 const ROTULO_SIT = { aguardando:'Aguardando', preparo:'Em preparo', pronto:'Pronto',
                      entregue:'Entregue', recusado:'Recusado' };
 
+let filtroAtual = null;
 async function abrirLista(filtro){
+  filtroAtual = filtro || null;
   el('#telaLista').classList.add('ver');
   const cx = el('#lsCorpo');
   cx.innerHTML = '<p class="vazio-lista">Carregando...</p>';
@@ -1194,15 +1214,18 @@ async function abrirLista(filtro){
       '<span>' + linhaAutor(s) + ' · ' + quando + '</span></span>' +
       '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
     if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
-    div.innerHTML = html;
+    div.innerHTML = '<div class="topo-ped">' + html + '</div>';
+    const topo = div.querySelector('.topo-ped');
     if((s.situacao === 'pronto' || s.situacao === 'entregue') && s.arquivo){
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'bt pq ' + (s.situacao === 'pronto' ? 'ouro' : 'vazio');
       b.textContent = s.situacao === 'pronto' ? 'Baixar' : 'Baixar de novo';
       b.onclick = () => baixarDocumento(s.arquivo, s.arquivo_nome, s.id, s.situacao);
-      div.appendChild(b);
+      topo.appendChild(b);
     }
+    if(perfil && perfil.papel === 'admin') acoesSecretaria(div, s);
+    else if(s.situacao === 'recusado' && s.criado_por === usuario.id) acoesAutorPedido(div, s);
     cx.appendChild(div);
   });
 }
@@ -1217,6 +1240,127 @@ async function baixarDocumento(caminho, nome, id, situacao){
     const u = await sb.from('solicitacoes').update({ situacao:'entregue' }).eq('id', id);
     if(!u.error){ contarSolicitacoes(); carregarNotas(); }
   }
+}
+
+
+/* ===================== AÇÕES DA SECRETARIA GERAL ===================== */
+function acoesSecretaria(div, s){
+  const bar = document.createElement('div');
+  bar.className = 'acoes-ped';
+  let bts = '';
+  if(s.situacao === 'aguardando')
+    bts += '<button type="button" class="bt pq vazio" data-a="preparo">Marcar em preparo</button>';
+  if(s.situacao === 'aguardando' || s.situacao === 'preparo')
+    bts += '<button type="button" class="bt pq verde" data-a="anexar">Anexar arquivo e concluir</button>' +
+           '<button type="button" class="bt pq rec" data-a="recusar">Recusar com motivo</button>';
+  if(s.situacao === 'pronto' || s.situacao === 'entregue')
+    bts += '<button type="button" class="bt pq vazio" data-a="anexar">Trocar arquivo</button>';
+  if(s.situacao === 'recusado')
+    bts += '<button type="button" class="bt pq vazio" data-a="reabrir">Reabrir pedido</button>';
+  bts += '<button type="button" class="bt pq vazio" data-a="excluir">Excluir</button>';
+  bar.innerHTML = bts;
+  div.appendChild(bar);
+
+  bar.querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      const a = b.getAttribute('data-a');
+      if(a === 'preparo') mudarSituacao(s.id, 'preparo');
+      else if(a === 'reabrir') mudarSituacao(s.id, 'aguardando', { recusa:null });
+      else if(a === 'anexar') pedirArquivo(s);
+      else if(a === 'recusar') abrirRecusaPedido(div, s);
+      else if(a === 'excluir') excluirPedido(s);
+    };
+  });
+}
+
+async function mudarSituacao(id, situacao, extra){
+  const dados = Object.assign({ situacao: situacao }, extra || {});
+  const r = await sb.from('solicitacoes').update(dados).eq('id', id).select('id');
+  if(r.error){ recado('Erro: ' + r.error.message); return; }
+  if(!r.data || !r.data.length){ recado('O servidor não autorizou a alteração.'); return; }
+  recado('Situação atualizada.');
+  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+}
+
+function pedirArquivo(s){
+  const inp = el('#arqPdf');
+  inp.value = '';
+  inp.onchange = () => enviarArquivo(inp, s);
+  inp.click();
+}
+
+function nomeArquivo(protocolo, original){
+  const p = String(original || '').lastIndexOf('.');
+  const ext = (p > 0 ? String(original).slice(p + 1) : 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '');
+  return String(protocolo || Date.now()).replace(/\D/g, '-') + '-' +
+         Math.random().toString(36).slice(2, 6) + '.' + ext;
+}
+
+async function enviarArquivo(inp, s){
+  const f = inp.files && inp.files[0];
+  if(!f) return;
+  if(f.size > 5 * 1024 * 1024){ recado('Arquivo muito grande (limite 5 MB).'); return; }
+  recado('Enviando arquivo...');
+  const caminho = nomeArquivo(s.protocolo, f.name);
+  const up = await sb.storage.from('documentos').upload(caminho, f, { contentType: f.type });
+  if(up.error){ recado('Falha ao enviar: ' + up.error.message); return; }
+  const r = await sb.from('solicitacoes')
+    .update({ situacao:'pronto', arquivo: caminho, arquivo_nome: f.name, recusa: null })
+    .eq('id', s.id).select('id');
+  if(r.error || !r.data || !r.data.length){
+    recado('Arquivo enviado, mas não consegui concluir o pedido.');
+    return;
+  }
+  recado('Documento anexado. O solicitante já pode baixar.');
+  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+}
+
+function abrirRecusaPedido(div, s){
+  if(div.querySelector('.forma-recusa')) return;
+  const f = document.createElement('div');
+  f.className = 'forma-recusa';
+  f.innerHTML = '<label>Motivo da recusa (o solicitante vai ler)</label>' +
+    '<textarea placeholder="Ex.: nome não confere com o cadastro de membros"></textarea>' +
+    '<div class="bts"><button type="button" class="bt pq vazio" data-c="1">Cancelar</button>' +
+    '<button type="button" class="bt pq rec" data-c="2">Confirmar recusa</button></div>';
+  div.appendChild(f);
+  const ta = f.querySelector('textarea');
+  ta.focus();
+  f.querySelector('[data-c="1"]').onclick = () => f.remove();
+  f.querySelector('[data-c="2"]').onclick = async ev => {
+    const m = ta.value.trim();
+    if(!m){ recado('Descreva o motivo da recusa.'); ta.focus(); return; }
+    ev.currentTarget.disabled = true;
+    await mudarSituacao(s.id, 'recusado', { recusa: m });
+  };
+}
+
+async function excluirPedido(s){
+  if(!confirm('Excluir definitivamente o pedido ' + (s.protocolo || '') + '?')) return;
+  if(s.arquivo) await sb.storage.from('documentos').remove([s.arquivo]);
+  const r = await sb.from('solicitacoes').delete().eq('id', s.id).select('id');
+  if(r.error){ recado('Erro: ' + r.error.message); return; }
+  if(!r.data || !r.data.length){ recado('O servidor não autorizou a exclusão.'); return; }
+  recado('Pedido excluído.');
+  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+}
+
+/* ---------- o autor cancela um pedido recusado ---------- */
+function acoesAutorPedido(div, s){
+  const bar = document.createElement('div');
+  bar.className = 'acoes-ped';
+  bar.innerHTML = '<button type="button" class="bt pq rec">Cancelar este pedido</button>';
+  div.appendChild(bar);
+  bar.querySelector('button').onclick = async () => {
+    if(!confirm('Cancelar o pedido ' + (s.protocolo || '') + '?')) return;
+    const r = await sb.from('solicitacoes').delete().eq('id', s.id).select('id');
+    if(r.error || !r.data || !r.data.length){
+      recado('Não foi possível cancelar. Fale com a Secretaria Geral.');
+      return;
+    }
+    recado('Pedido cancelado.');
+    contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+  };
 }
 
 /* ---------- contadores ---------- */
