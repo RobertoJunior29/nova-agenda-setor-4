@@ -587,7 +587,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v15 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v16 · 03.08.2026</span></p>
 </div>
 
 
@@ -1250,15 +1250,47 @@ async function abrirLista(filtro){
 }
 
 async function baixarDocumento(caminho, nome, id, situacao){
-  const r = await sb.storage.from('documentos').createSignedUrl(caminho, 120);
-  if(r.error){ recado('Não foi possível abrir o arquivo.'); return; }
-  const a = document.createElement('a');
-  a.href = r.data.signedUrl; a.download = nome || 'documento.pdf';
-  a.target = '_blank'; a.click();
-  if(id && situacao === 'pronto'){
-    const u = await sb.from('solicitacoes').update({ situacao:'entregue' }).eq('id', id);
-    if(!u.error){ contarSolicitacoes(); carregarNotas(); }
+  const arquivo = nome || 'documento.pdf';
+  if(id) statusLinha(id, 'Abrindo ' + arquivo + '...', '');
+
+  const r = await sb.storage.from('documentos').download(caminho);
+
+  if(r.error || !r.data){
+    // plano B: endereço temporário, abre em nova aba
+    const s = await sb.storage.from('documentos').createSignedUrl(caminho, 180);
+    if(s.error){
+      if(id) statusLinha(id, 'Não foi possível abrir o arquivo: ' + s.error.message, 'ruim');
+      else recado('Não foi possível abrir o arquivo.');
+      return;
+    }
+    window.open(s.data.signedUrl, '_blank');
+  } else {
+    const url = URL.createObjectURL(r.data);
+
+    // baixa para o computador, com o nome original
+    const a = document.createElement('a');
+    a.href = url; a.download = arquivo;
+    document.body.appendChild(a); a.click(); a.remove();
+
+    // e abre para visualizar
+    const aba = window.open(url, '_blank');
+    if(!aba && id){
+      statusLinha(id, 'Arquivo baixado. O navegador bloqueou a abertura em nova aba — ' +
+        'procure na pasta Downloads.', 'bom');
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
   }
+
+  if(id && situacao === 'pronto'){
+    const u = await sb.from('solicitacoes').update({ situacao:'entregue' }).eq('id', id).select('id');
+    if(!u.error && u.data && u.data.length){
+      statusLinha(id, 'Documento baixado. Pedido concluído.', 'bom');
+      contarSolicitacoes(); carregarNotas();
+      setTimeout(() => abrirLista(filtroAtual), 1400);
+      return;
+    }
+  }
+  if(id) statusLinha(id, 'Arquivo aberto e baixado.', 'bom');
 }
 
 
