@@ -200,6 +200,14 @@ body[data-tema="dark"] .forma-recusa{background:#2c2415;border-color:#54441f}
 body[data-tema="dark"] .forma-recusa label{color:#e0c68e}
 body[data-tema="dark"] .forma-recusa textarea{background:#1b2c34;color:#e2ecf0;border-color:#54441f}
 body[data-tema="dark"] .acoes-ped{border-color:#24343c}
+
+.status-ped{margin-top:10px;padding:9px 12px;border-radius:8px;font-size:.85rem;line-height:1.5;
+  background:var(--azul-fundo);color:#3d6478;border:1px solid #c6dce8}
+.status-ped.bom{background:var(--verde-fundo);color:#3a6132;border-color:#cbdfc4}
+.status-ped.ruim{background:#fbe9e7;color:#8f3d35;border-color:#f0cdc8}
+body[data-tema="dark"] .status-ped{background:#132832;color:#9dbecd;border-color:#2a4553}
+body[data-tema="dark"] .status-ped.bom{background:#122a1c;color:#a3c8ad;border-color:#2b5138}
+body[data-tema="dark"] .status-ped.ruim{background:#2a1614;color:#e5a49c;border-color:#4d2b26}
 .bt.verde{background:#3a6132;color:#fff}
 .bt.verde:hover{background:#2e4e28}
 
@@ -579,7 +587,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     </a>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v14 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v15 · 03.08.2026</span></p>
 </div>
 
 
@@ -1224,6 +1232,7 @@ async function abrirLista(filtro){
       '<span>' + linhaAutor(s) + ' · ' + quando + '</span></span>' +
       '<span class="eti ' + s.situacao + '">' + (ROTULO_SIT[s.situacao] || s.situacao) + '</span>';
     if(s.recusa) html += '<span class="motivo">Motivo: ' + s.recusa + '</span>';
+    div.setAttribute('data-ped', s.id);
     div.innerHTML = '<div class="topo-ped">' + html + '</div>';
     const topo = div.querySelector('.topo-ped');
     if((s.situacao === 'pronto' || s.situacao === 'entregue') && s.arquivo){
@@ -1285,11 +1294,15 @@ function acoesSecretaria(div, s){
 
 async function mudarSituacao(id, situacao, extra){
   const dados = Object.assign({ situacao: situacao }, extra || {});
+  statusLinha(id, 'Atualizando...', '');
   const r = await sb.from('solicitacoes').update(dados).eq('id', id).select('id');
-  if(r.error){ recado('Erro: ' + r.error.message); return; }
-  if(!r.data || !r.data.length){ recado('O servidor não autorizou a alteração.'); return; }
-  recado('Situação atualizada.');
-  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+  if(r.error){ statusLinha(id, 'Erro: ' + r.error.message, 'ruim'); return; }
+  if(!r.data || !r.data.length){
+    statusLinha(id, 'O servidor não autorizou a alteração.', 'ruim'); return;
+  }
+  statusLinha(id, 'Situação atualizada.', 'bom');
+  contarSolicitacoes(); carregarNotas();
+  setTimeout(() => abrirLista(filtroAtual), 900);
 }
 
 function pedirArquivo(s){
@@ -1306,23 +1319,61 @@ function nomeArquivo(protocolo, original){
          Math.random().toString(36).slice(2, 6) + '.' + ext;
 }
 
+function statusLinha(id, texto, tipo){
+  const div = document.querySelector('[data-ped="' + id + '"]');
+  if(!div) { recado(texto); return; }
+  let s = div.querySelector('.status-ped');
+  if(!s){
+    s = document.createElement('div');
+    s.className = 'status-ped';
+    div.appendChild(s);
+  }
+  s.className = 'status-ped ' + (tipo || '');
+  s.textContent = texto;
+}
+
 async function enviarArquivo(inp, s){
   const f = inp.files && inp.files[0];
   if(!f) return;
-  if(f.size > 5 * 1024 * 1024){ recado('Arquivo muito grande (limite 5 MB).'); return; }
-  recado('Enviando arquivo...');
-  const caminho = nomeArquivo(s.protocolo, f.name);
-  const up = await sb.storage.from('documentos').upload(caminho, f, { contentType: f.type });
-  if(up.error){ recado('Falha ao enviar: ' + up.error.message); return; }
-  const r = await sb.from('solicitacoes')
-    .update({ situacao:'pronto', arquivo: caminho, arquivo_nome: f.name, recusa: null })
-    .eq('id', s.id).select('id');
-  if(r.error || !r.data || !r.data.length){
-    recado('Arquivo enviado, mas não consegui concluir o pedido.');
+  if(f.size > 5 * 1024 * 1024){
+    statusLinha(s.id, 'Arquivo muito grande: ' +
+      (f.size/1048576).toFixed(1) + ' MB. O limite é 5 MB.', 'ruim');
     return;
   }
-  recado('Documento anexado. O solicitante já pode baixar.');
-  contarSolicitacoes(); carregarNotas(); abrirLista(filtroAtual);
+
+  statusLinha(s.id, 'Enviando ' + f.name + '...', '');
+  const caminho = nomeArquivo(s.protocolo, f.name);
+  const up = await sb.storage.from('documentos').upload(caminho, f, { contentType: f.type });
+
+  if(up.error){
+    console.log('[portal] falha no envio do arquivo:', up.error);
+    let dica = up.error.message || 'erro desconhecido';
+    if(/bucket/i.test(dica)) dica += ' — o depósito "documentos" não existe no Supabase.';
+    else if(/policy|permission|denied|unauthorized/i.test(dica))
+      dica += ' — as permissões do depósito não autorizam o envio.';
+    statusLinha(s.id, 'Falha ao enviar o arquivo: ' + dica, 'ruim');
+    return;
+  }
+
+  statusLinha(s.id, 'Arquivo enviado. Concluindo o pedido...', '');
+  const r = await sb.from('solicitacoes')
+    .update({ situacao:'pronto', arquivo: caminho, arquivo_nome: f.name, recusa: null })
+    .eq('id', s.id).select('id,situacao');
+
+  if(r.error){
+    console.log('[portal] falha ao concluir:', r.error);
+    statusLinha(s.id, 'O arquivo subiu, mas não consegui concluir: ' + r.error.message, 'ruim');
+    return;
+  }
+  if(!r.data || !r.data.length){
+    statusLinha(s.id, 'O arquivo subiu, mas o servidor não autorizou concluir o pedido. ' +
+      'Confira se seu perfil é Secretaria Geral.', 'ruim');
+    return;
+  }
+
+  statusLinha(s.id, 'Documento anexado. O solicitante já pode baixar.', 'bom');
+  contarSolicitacoes(); carregarNotas();
+  setTimeout(() => abrirLista(filtroAtual), 1400);
 }
 
 function abrirRecusaPedido(div, s){
