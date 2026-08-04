@@ -311,6 +311,14 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
 
 
 
+
+.senha-linha{display:flex;gap:6px;align-items:stretch}
+.senha-linha input{flex:1;font-family:var(--mono);letter-spacing:.06em}
+.senha-linha button{flex:0 0 auto;font-size:1rem;line-height:1;padding:0 12px}
+#nvCred{font-family:var(--mono);font-size:.88rem;line-height:1.7;background:var(--fundo);
+  border:1px dashed var(--louro);border-radius:9px;padding:13px 15px;margin:0 0 12px;white-space:pre-wrap}
+.cred-bts{display:flex;gap:8px;flex-wrap:wrap}
+body[data-tema="dark"] #nvCred{background:#132832;border-color:#c3a558;color:#cfe0e6}
 .novo-acesso{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--linha)}
 .ac-titulo{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--louro-forte);margin:16px 0 12px}
@@ -624,7 +632,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v24 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v26 · 03.08.2026</span></p>
 </div>
 
 
@@ -696,12 +704,23 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
       <div class="grade">
         <div class="campo largo"><label>Nome completo *</label><input id="nvNome" placeholder="Como aparecerá no sistema"></div>
         <div class="campo"><label>E-mail *</label><input id="nvEmail" type="email" spellcheck="false" autocomplete="off"></div>
-        <div class="campo"><label>Senha provisória *</label><input id="nvSenha" type="text" placeholder="mínimo 6 caracteres" autocomplete="off"></div>
+        <div class="campo"><label>Senha provisória *</label>
+          <div class="senha-linha"><input id="nvSenha" type="text" autocomplete="off" spellcheck="false"></div>
+          <span class="dica">Senha padrão. A pessoa troca obrigatoriamente no primeiro acesso.
+          Você pode alterá-la aqui se quiser.</span></div>
         <div class="campo"><label>Função *</label><select id="nvPapel"></select></div>
         <div class="campo"><label>Setor</label><select id="nvSetor"></select></div>
         <div class="campo largo"><label>Congregação</label><select id="nvCongr"></select></div>
       </div>
       <div class="erro-form" id="nvErro"></div>
+      <div id="nvPronto" style="display:none">
+        <p class="ac-titulo" style="margin-top:0">Acesso criado</p>
+        <pre id="nvCred"></pre>
+        <div class="cred-bts">
+          <button type="button" class="bt pq" id="nvCopiar">Copiar para enviar</button>
+          <button type="button" class="bt pq vazio" id="nvOutro">Criar outro acesso</button>
+        </div>
+      </div>
       <div class="fim">
         <button type="button" class="bt vazio" id="nvCancelar">Cancelar</button>
         <button type="button" class="bt" id="nvCriar">Criar acesso</button>
@@ -1204,6 +1223,14 @@ async function abrirAcessos(){
 }
 
 
+
+/* ---------- senha provisória gerada ---------- */
+const SENHA_PADRAO = 'ieadesga123456';
+
+function gerarSenha(){
+  return SENHA_PADRAO;
+}
+
 /* ---------- criar acesso sem sair do sistema ---------- */
 let sbAux = null;
 
@@ -1288,10 +1315,14 @@ async function criarAcesso(){
   if(!ok){
     er.textContent = 'Conta criada, mas não consegui definir a função. Ajuste na lista abaixo.';
   } else {
-    recado('Acesso criado para <b>' + nome + '</b>. Informe o e-mail e a senha provisória.');
-    el('#nvNome').value = ''; el('#nvEmail').value = ''; el('#nvSenha').value = '';
-    el('#acFormNovo').style.display = 'none';
-    el('#acAbrirNovo').style.display = '';
+    el('#nvCred').textContent =
+      'Acesso a Secretaria IEADESGA' + String.fromCharCode(10) + String.fromCharCode(10) +
+      'Nome: ' + nome + String.fromCharCode(10) +
+      'E-mail: ' + email + String.fromCharCode(10) +
+      'Senha provisoria: ' + senha + String.fromCharCode(10) + String.fromCharCode(10) +
+      'No primeiro acesso o sistema pede para voce criar uma senha propria.';
+    el('#nvPronto').style.display = '';
+    recado('Acesso criado para <b>' + nome + '</b>.');
   }
   await abrirAcessos();
 }
@@ -1300,8 +1331,21 @@ el('#acAbrirNovo').onclick = () => {
   el('#acFormNovo').style.display = '';
   el('#acAbrirNovo').style.display = 'none';
   el('#nvErro').textContent = '';
+  el('#nvPronto').style.display = 'none';
+  el('#nvSenha').value = gerarSenha();
   montarCamposNovo();
   setTimeout(() => el('#nvNome').focus(), 60);
+};
+el('#nvOutro').onclick = () => {
+  el('#nvPronto').style.display = 'none';
+  el('#nvNome').value = ''; el('#nvEmail').value = '';
+  el('#nvSenha').value = gerarSenha();
+  el('#nvErro').textContent = '';
+  setTimeout(() => el('#nvNome').focus(), 60);
+};
+el('#nvCopiar').onclick = () => {
+  const t = el('#nvCred').textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(() => recado('Copiado.'));
 };
 el('#nvCancelar').onclick = () => {
   el('#acFormNovo').style.display = 'none';
