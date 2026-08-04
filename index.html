@@ -317,12 +317,15 @@ body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
 #acFormNovo{margin-top:4px}
 body[data-tema="dark"] .novo-acesso{border-color:#24343c}
 body[data-tema="dark"] .ac-titulo{color:#c3a558}
-.linha-ac{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr auto;gap:9px;align-items:center;
+.linha-ac{display:grid;grid-template-columns:1.4fr .95fr .95fr 1.1fr auto auto;gap:9px;align-items:center;
   padding:13px 0;border-bottom:1px solid var(--linha)}
 .ac-quem input{width:100%;box-sizing:border-box;font-size:.9rem;font-weight:600;padding:7px 9px;
   border:1px solid var(--linha);border-radius:7px;background:var(--branco);color:var(--texto)}
 .ac-quem span{display:block;font-size:10.5px;color:var(--suave);margin-top:3px;word-break:break-all}
 .ac-prov{color:var(--chama);font-weight:700}
+.linha-ac.inativo{opacity:.6}
+.linha-ac.inativo .ac-quem input{text-decoration:line-through}
+.ac-inat{color:var(--vermelhao);font-weight:700}
 .linha-ac select{font-size:.82rem;padding:7px 8px;border:1px solid var(--linha);border-radius:7px;
   background:var(--branco);color:var(--texto);width:100%}
 .ac-status{grid-column:1/-1;font-size:.8rem;line-height:1.45}
@@ -621,7 +624,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v23 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v24 · 03.08.2026</span></p>
 </div>
 
 
@@ -707,8 +710,9 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
   </div>
   <div id="acCorpo"><p class="vazio-lista">Carregando...</p></div>
   <p class="dica" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--linha)">
-    A senha provisória deve ser informada à pessoa, que pode trocá-la pelo botão da chave.
-    Contas criadas aqui já entram com a função definida.</p>
+    A senha provisória deve ser informada à pessoa, que a troca no primeiro acesso.
+    <b>Desativar</b> impede a entrada e remove todas as permissões, sem apagar o histórico.
+    Para apagar a conta em definitivo, use o painel do Supabase em Authentication &rsaquo; Users.</p>
 </div></div>
 
 <div class="tela" id="telaSenha"><div class="caixa" style="max-width:390px">
@@ -814,6 +818,18 @@ function abrirTrocaSenha(obrigatoria){
   }
   el('#telaSenha').classList.add('ver');
   setTimeout(() => el('#snNova').focus(), 70);
+}
+
+async function conferirAtivo(){
+  if(!usuario || !perfil) return true;
+  if(perfil.ativo === false){
+    if(sb) await sb.auth.signOut();
+    usuario = null; perfil = null;
+    pintarBarra();
+    abrirLogin('Seu acesso foi desativado. Fale com a Secretaria Geral.');
+    return false;
+  }
+  return true;
 }
 
 function conferirSenhaProvisoria(){
@@ -995,7 +1011,7 @@ async function carregarPerfil(){
   perfil = null;
   if(!sb || !usuario) return;
   const r = await sb.from('perfis')
-    .select('nome,papel,setor,congregacao,senha_provisoria')
+    .select('nome,papel,setor,congregacao,senha_provisoria,ativo')
     .eq('user_id', usuario.id).maybeSingle();
   if(!r.error && r.data) perfil = r.data;
 }
@@ -1074,7 +1090,7 @@ async function abrirAcessos(){
   if(el('#acFormNovo') && el('#acFormNovo').style.display === 'none') el('#acAbrirNovo').style.display = '';
   const cx = el('#acCorpo');
   cx.innerHTML = '<p class="vazio-lista">Carregando...</p>';
-  const r = await sb.from('perfis').select('user_id,nome,email,papel,setor,congregacao,senha_provisoria').order('nome');
+  const r = await sb.from('perfis').select('user_id,nome,email,papel,setor,congregacao,senha_provisoria,ativo').order('nome');
   if(r.error){ cx.innerHTML = '<p class="vazio-lista">Erro: ' + r.error.message + '</p>'; return; }
   let dados = r.data || [];
   if(!ehSistema()) dados = dados.filter(p => p.papel !== 'sistema');
@@ -1089,12 +1105,14 @@ async function abrirAcessos(){
         '<input class="ac-nome" type="text" value="' + (p.nome || '').replace(/"/g, '&quot;') +
         '" placeholder="Nome completo">' +
         '<span>' + (p.email || '') +
-        (p.senha_provisoria ? ' <b class="ac-prov">senha provisória</b>' : '') + '</span></div>' +
+        (p.senha_provisoria ? ' <b class="ac-prov">senha provisória</b>' : '') +
+        (p.ativo === false ? ' <b class="ac-inat">acesso desativado</b>' : '') + '</span></div>' +
       '<select class="ac-papel">' + opcoesPapel(p.papel) + '</select>' +
       '<select class="ac-setor">' + opcoesSetorAc(p.papel, p.setor) + '</select>' +
       '<select class="ac-congr">' + opcoesCongrAc(p.papel, p.setor, p.congregacao) + '</select>' +
       '<button type="button" class="bt pq ac-salvar">Salvar</button>' +
       '<div class="ac-status"></div>';
+    if(p.ativo === false) li.classList.add('inativo');
     cx.appendChild(li);
 
     const sPap = li.querySelector('.ac-papel'),
@@ -1111,6 +1129,32 @@ async function abrirAcessos(){
     sSet.addEventListener('change', () => {
       sCon.innerHTML = opcoesCongrAc(sPap.value, sSet.value, sCon.value);
     });
+
+    const souEu = (usuario && p.user_id === usuario.id);
+    if(!souEu && (p.papel !== 'sistema' || ehSistema())){
+      const bx = document.createElement('button');
+      bx.type = 'button';
+      bx.className = 'bt pq ' + (p.ativo === false ? 'vazio' : 'rec') + ' ac-desativar';
+      bx.textContent = (p.ativo === false) ? 'Reativar' : 'Desativar';
+      li.querySelector('.ac-salvar').insertAdjacentElement('afterend', bx);
+      bx.onclick = async () => {
+        const ligar = (p.ativo === false);
+        if(!ligar && !confirm('Desativar o acesso de ' + (p.nome || p.email) +
+           '? A pessoa deixa de entrar no sistema.')) return;
+        bx.disabled = true;
+        const u = await sb.from('perfis')
+          .update(ligar ? { ativo: true } : { ativo: false, papel: 'leitor', setor: null, congregacao: null })
+          .eq('user_id', p.user_id).select('user_id');
+        bx.disabled = false;
+        if(u.error || !u.data || !u.data.length){
+          stt.className = 'ac-status ruim';
+          stt.textContent = u.error ? ('Erro: ' + u.error.message) : 'O servidor não autorizou.';
+          return;
+        }
+        recado(ligar ? 'Acesso reativado.' : 'Acesso desativado.');
+        await abrirAcessos();
+      };
+    }
 
     li.querySelector('.ac-salvar').onclick = async ev => {
       const papel = sPap.value;
@@ -2049,7 +2093,7 @@ async function iniciar(){
   await carregarCongregacoes();
   if(usuario) marcarAtividade();
   pintarBarra();
-  conferirSenhaProvisoria();
+  if(await conferirAtivo()) conferirSenhaProvisoria();
   carregarNotas();
   contarSolicitacoes();
   sb.auth.onAuthStateChange(async function(_ev, sess){
