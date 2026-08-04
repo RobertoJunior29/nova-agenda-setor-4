@@ -309,6 +309,23 @@ body[data-tema="dark"] .eti.recusado{background:#251716;color:#e59a92}
 body[data-tema="dark"] .bt-tema{border-color:#2a3c45;color:#c3a558}
 body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
 
+
+.linha-ac{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr auto;gap:9px;align-items:center;
+  padding:13px 0;border-bottom:1px solid var(--linha)}
+.ac-quem input{width:100%;box-sizing:border-box;font-size:.9rem;font-weight:600;padding:7px 9px;
+  border:1px solid var(--linha);border-radius:7px;background:var(--branco);color:var(--texto)}
+.ac-quem span{display:block;font-size:10.5px;color:var(--suave);margin-top:3px;word-break:break-all}
+.linha-ac select{font-size:.82rem;padding:7px 8px;border:1px solid var(--linha);border-radius:7px;
+  background:var(--branco);color:var(--texto);width:100%}
+.ac-status{grid-column:1/-1;font-size:.8rem;line-height:1.45}
+.ac-status.bom{color:#3a6132} .ac-status.ruim{color:var(--vermelhao)}
+body[data-tema="dark"] .linha-ac{border-color:#24343c}
+body[data-tema="dark"] .ac-quem input,body[data-tema="dark"] .linha-ac select{
+  background:#1b2c34;border-color:#2a3c45;color:#e2ecf0}
+body[data-tema="dark"] .ac-quem span{color:#93a8b1}
+body[data-tema="dark"] .ac-status.bom{color:#a3c8ad}
+@media(max-width:720px){.linha-ac{grid-template-columns:1fr;gap:7px}}
+
 /* ---------- telas sobrepostas ---------- */
 .tela{position:fixed;inset:0;z-index:70;display:none;padding:18px;overflow-y:auto;
   background:rgba(8,34,47,.8);backdrop-filter:blur(4px)}
@@ -596,7 +613,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v19 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v21 · 03.08.2026</span></p>
 </div>
 
 
@@ -656,6 +673,16 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
 
 
 <input type="file" id="arqPdf" accept="application/pdf,image/jpeg,image/png" style="display:none">
+
+<div class="tela" id="telaAcessos"><div class="caixa" style="max-width:820px">
+  <div class="cabeca"><h2>Acessos da equipe</h2><button type="button" class="fechar" id="acX">&times;</button></div>
+  <p class="sub">Defina o nome, a função, o setor e a congregação de cada pessoa.</p>
+  <div id="acCorpo"><p class="vazio-lista">Carregando...</p></div>
+  <p class="dica" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--linha)">
+    Para dar acesso a alguém, crie a conta no painel do Supabase em <b>Authentication &rsaquo; Users</b>.
+    A pessoa aparece aqui automaticamente como <b>Leitor</b>.</p>
+</div></div>
+
 <div class="tela" id="telaSenha"><div class="caixa" style="max-width:390px">
   <div class="cabeca"><h2>Trocar minha senha</h2><button type="button" class="fechar" id="snX">&times;</button></div>
   <p class="sub" id="snQuem"></p>
@@ -798,12 +825,14 @@ function pintarBarra(){
       (papel ? '<span class="funcao">' + papel + '</span>' : '') +
       (onde ? '<span class="onde">' + onde + '</span>' : '') + '</span>' +
       '<span class="acoes-barra">' +
+        (ehSecretaria() ? '<button type="button" class="bt-tema" id="btAcessos" title="Acessos da equipe">\u2699</button>' : '') +
         '<button type="button" class="bt-tema" id="btChave" title="Trocar minha senha">\ud83d\udd11</button>' +
         '<button type="button" class="bt-tema" id="btTema"></button>' +
         '<button type="button" class="sair" id="btSair">Sair</button>' +
       '</span>';
     el('#btSair').onclick = sair;
     el('#btChave').onclick = abrirTrocaSenha;
+    if(el('#btAcessos')) el('#btAcessos').onclick = abrirAcessos;
     el('#btTema').onclick = alternarTema;
     aplicarTema(temaAtual());
   } else {
@@ -907,6 +936,163 @@ async function carregarPerfil(){
 }
 
 
+
+
+/* ===================== ACESSOS DA EQUIPE ===================== */
+const PAPEIS_BASE = ['admin', 'secretario', 'secretario_congr', 'leitor'];
+const ROTULO_PAPEL = {
+  sistema: 'Administrador do sistema',
+  admin: 'Secretaria Geral',
+  secretario: 'Secretário de Setor',
+  secretario_congr: 'Secretário de Congregação',
+  leitor: 'Leitor'
+};
+
+function ehSecretaria(){
+  if(!perfil) return false;
+  return perfil.papel === 'admin' || perfil.papel === 'sistema';
+}
+function ehSistema(){
+  return !!perfil && perfil.papel === 'sistema';
+}
+function papeisDisponiveis(){
+  return ehSistema() ? ['sistema'].concat(PAPEIS_BASE) : PAPEIS_BASE;
+}
+
+function opcoesPapel(atual){
+  return papeisDisponiveis().map(p =>
+    '<option value="' + p + '"' + (atual === p ? ' selected' : '') + '>' +
+    (ROTULO_PAPEL[p] || p) + '</option>').join('');
+}
+
+function opcoesSetorAc(papel, atual){
+  atual = atual || '';
+  const vazio = (papel === 'secretario' || papel === 'secretario_congr')
+    ? '– selecione o setor' : '– todos do campo';
+  let h = '<option value=""' + (atual === '' ? ' selected' : '') + '>' + vazio + '</option>';
+  SETORES_LISTA.forEach(s => {
+    h += '<option value="' + s + '"' + (atual === s ? ' selected' : '') + '>' + s + '</option>';
+  });
+  return h;
+}
+
+function opcoesCongrAc(papel, setor, atual){
+  atual = atual || '';
+  let lista, vazio;
+  if(papel === 'admin' || papel === 'sistema'){
+    lista = CONGREGACOES.map(c => c.nome);
+    vazio = '– todas do campo';
+  } else if(!setor){
+    lista = [];
+    vazio = '– selecione o setor primeiro';
+  } else if(papel === 'secretario_congr'){
+    lista = CONGREGACOES.filter(c => c.setor === setor).map(c => c.nome);
+    vazio = '– selecione a congregação (obrigatório)';
+  } else {
+    lista = CONGREGACOES.filter(c => c.setor === setor).map(c => c.nome);
+    vazio = '– todas do setor';
+  }
+  const unica = (!atual && papel !== 'admin' && papel !== 'sistema' && lista.length === 1) ? lista[0] : null;
+  let h = '<option value=""' + ((atual === '' && !unica) ? ' selected' : '') + '>' + vazio + '</option>';
+  lista.forEach(n => {
+    h += '<option value="' + n + '"' + ((n === atual || n === unica) ? ' selected' : '') + '>' + n + '</option>';
+  });
+  if(atual && lista.indexOf(atual) < 0){
+    h += '<option value="' + atual + '" selected>' + atual + ' (fora do setor)</option>';
+  }
+  return h;
+}
+
+async function abrirAcessos(){
+  if(!ehSecretaria()){ recado('Acesso restrito à Secretaria Geral.'); return; }
+  el('#telaAcessos').classList.add('ver');
+  const cx = el('#acCorpo');
+  cx.innerHTML = '<p class="vazio-lista">Carregando...</p>';
+  const r = await sb.from('perfis').select('user_id,nome,email,papel,setor,congregacao').order('nome');
+  if(r.error){ cx.innerHTML = '<p class="vazio-lista">Erro: ' + r.error.message + '</p>'; return; }
+  let dados = r.data || [];
+  if(!ehSistema()) dados = dados.filter(p => p.papel !== 'sistema');
+  if(!dados.length){ cx.innerHTML = '<p class="vazio-lista">Nenhum perfil cadastrado.</p>'; return; }
+
+  cx.innerHTML = '';
+  dados.forEach(p => {
+    const li = document.createElement('div');
+    li.className = 'linha-ac';
+    li.innerHTML =
+      '<div class="ac-quem">' +
+        '<input class="ac-nome" type="text" value="' + (p.nome || '').replace(/"/g, '&quot;') +
+        '" placeholder="Nome completo">' +
+        '<span>' + (p.email || '') + '</span></div>' +
+      '<select class="ac-papel">' + opcoesPapel(p.papel) + '</select>' +
+      '<select class="ac-setor">' + opcoesSetorAc(p.papel, p.setor) + '</select>' +
+      '<select class="ac-congr">' + opcoesCongrAc(p.papel, p.setor, p.congregacao) + '</select>' +
+      '<button type="button" class="bt pq ac-salvar">Salvar</button>' +
+      '<div class="ac-status"></div>';
+    cx.appendChild(li);
+
+    const sPap = li.querySelector('.ac-papel'),
+          sSet = li.querySelector('.ac-setor'),
+          sCon = li.querySelector('.ac-congr'),
+          stt  = li.querySelector('.ac-status');
+
+    sPap.addEventListener('change', () => {
+      const chefe = (sPap.value === 'admin' || sPap.value === 'sistema');
+      const set = chefe ? '' : sSet.value;
+      sSet.innerHTML = opcoesSetorAc(sPap.value, set);
+      sCon.innerHTML = opcoesCongrAc(sPap.value, set, chefe ? '' : sCon.value);
+    });
+    sSet.addEventListener('change', () => {
+      sCon.innerHTML = opcoesCongrAc(sPap.value, sSet.value, sCon.value);
+    });
+
+    li.querySelector('.ac-salvar').onclick = async ev => {
+      const papel = sPap.value;
+      const setor = sSet.value || null;
+      const congregacao = sCon.value || null;
+      const nome = li.querySelector('.ac-nome').value.trim() || null;
+      const precisaSetor = (papel === 'secretario' || papel === 'secretario_congr');
+      if(precisaSetor && !setor){
+        stt.className = 'ac-status ruim';
+        stt.textContent = 'Este perfil precisa de um setor definido.';
+        return;
+      }
+      if(papel === 'secretario_congr' && !congregacao){
+        stt.className = 'ac-status ruim';
+        stt.textContent = 'Secretário de Congregação precisa de uma congregação definida.';
+        return;
+      }
+      if(precisaSetor && congregacao){
+        const dela = CONGREGACOES.filter(c => c.nome === congregacao)[0];
+        if(dela && dela.setor !== setor){
+          stt.className = 'ac-status ruim';
+          stt.textContent = congregacao + ' pertence ao ' + dela.setor + ', não ao ' + setor + '.';
+          return;
+        }
+      }
+      const bt = ev.currentTarget;
+      bt.disabled = true; bt.textContent = '...';
+      const u = await sb.from('perfis')
+        .update({ nome: nome, papel: papel, setor: setor, congregacao: congregacao })
+        .eq('user_id', p.user_id).select('user_id');
+      bt.disabled = false; bt.textContent = 'Salvar';
+      if(u.error){
+        stt.className = 'ac-status ruim';
+        stt.textContent = 'Erro: ' + u.error.message;
+        return;
+      }
+      if(!u.data || !u.data.length){
+        stt.className = 'ac-status ruim';
+        stt.textContent = 'O servidor não autorizou esta alteração.';
+        return;
+      }
+      stt.className = 'ac-status bom';
+      stt.textContent = 'Acesso atualizado.';
+      if(usuario && p.user_id === usuario.id){ await carregarPerfil(); pintarBarra(); }
+    };
+  });
+}
+
+el('#acX').onclick = () => el('#telaAcessos').classList.remove('ver');
 
 /* ---------- consulta por protocolo ---------- */
 function normalizarProtocolo(v){
@@ -1655,7 +1841,7 @@ function marcarAtividade(){
 
 async function encerrarPorInatividade(){
   try{ localStorage.removeItem(CHAVE_ATIV); }catch(e){}
-  ['#telaForm','#telaOk','#telaLista','#telaSenha'].forEach(s => {
+  ['#telaForm','#telaOk','#telaLista','#telaSenha','#telaAcessos'].forEach(s => {
     const t = el(s); if(t) t.classList.remove('ver');
   });
   if(sb) await sb.auth.signOut();
