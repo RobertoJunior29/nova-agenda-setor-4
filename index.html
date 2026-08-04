@@ -310,11 +310,19 @@ body[data-tema="dark"] .bt-tema{border-color:#2a3c45;color:#c3a558}
 body[data-tema="dark"] .bt-tema:hover{border-color:#c3a558;color:#e0c68e}
 
 
+
+.novo-acesso{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--linha)}
+.ac-titulo{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--louro-forte);margin:16px 0 12px}
+#acFormNovo{margin-top:4px}
+body[data-tema="dark"] .novo-acesso{border-color:#24343c}
+body[data-tema="dark"] .ac-titulo{color:#c3a558}
 .linha-ac{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr auto;gap:9px;align-items:center;
   padding:13px 0;border-bottom:1px solid var(--linha)}
 .ac-quem input{width:100%;box-sizing:border-box;font-size:.9rem;font-weight:600;padding:7px 9px;
   border:1px solid var(--linha);border-radius:7px;background:var(--branco);color:var(--texto)}
 .ac-quem span{display:block;font-size:10.5px;color:var(--suave);margin-top:3px;word-break:break-all}
+.ac-prov{color:var(--chama);font-weight:700}
 .linha-ac select{font-size:.82rem;padding:7px 8px;border:1px solid var(--linha);border-radius:7px;
   background:var(--branco);color:var(--texto);width:100%}
 .ac-status{grid-column:1/-1;font-size:.8rem;line-height:1.45}
@@ -613,7 +621,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v21 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v23 · 03.08.2026</span></p>
 </div>
 
 
@@ -677,10 +685,30 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
 <div class="tela" id="telaAcessos"><div class="caixa" style="max-width:820px">
   <div class="cabeca"><h2>Acessos da equipe</h2><button type="button" class="fechar" id="acX">&times;</button></div>
   <p class="sub">Defina o nome, a função, o setor e a congregação de cada pessoa.</p>
+
+  <div class="novo-acesso">
+    <button type="button" class="bt" id="acAbrirNovo">+ Criar novo acesso</button>
+    <div id="acFormNovo" style="display:none">
+      <p class="ac-titulo">Novo acesso</p>
+      <div class="grade">
+        <div class="campo largo"><label>Nome completo *</label><input id="nvNome" placeholder="Como aparecerá no sistema"></div>
+        <div class="campo"><label>E-mail *</label><input id="nvEmail" type="email" spellcheck="false" autocomplete="off"></div>
+        <div class="campo"><label>Senha provisória *</label><input id="nvSenha" type="text" placeholder="mínimo 6 caracteres" autocomplete="off"></div>
+        <div class="campo"><label>Função *</label><select id="nvPapel"></select></div>
+        <div class="campo"><label>Setor</label><select id="nvSetor"></select></div>
+        <div class="campo largo"><label>Congregação</label><select id="nvCongr"></select></div>
+      </div>
+      <div class="erro-form" id="nvErro"></div>
+      <div class="fim">
+        <button type="button" class="bt vazio" id="nvCancelar">Cancelar</button>
+        <button type="button" class="bt" id="nvCriar">Criar acesso</button>
+      </div>
+    </div>
+  </div>
   <div id="acCorpo"><p class="vazio-lista">Carregando...</p></div>
   <p class="dica" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--linha)">
-    Para dar acesso a alguém, crie a conta no painel do Supabase em <b>Authentication &rsaquo; Users</b>.
-    A pessoa aparece aqui automaticamente como <b>Leitor</b>.</p>
+    A senha provisória deve ser informada à pessoa, que pode trocá-la pelo botão da chave.
+    Contas criadas aqui já entram com a função definida.</p>
 </div></div>
 
 <div class="tela" id="telaSenha"><div class="caixa" style="max-width:390px">
@@ -763,12 +791,39 @@ function el(s){ return document.querySelector(s); }
 
 
 /* ---------- trocar a própria senha ---------- */
-function abrirTrocaSenha(){
+let senhaObrigatoria = false;
+
+function abrirTrocaSenha(obrigatoria){
   if(!sb || !usuario){ abrirLogin('Entre para trocar a senha.'); return; }
+  senhaObrigatoria = !!obrigatoria;
   el('#snQuem').textContent = usuario.email;
   el('#snNova').value = ''; el('#snRepete').value = ''; el('#snErro').textContent = '';
+  const tit = el('#telaSenha').querySelector('h2');
+  const cancelar = el('#snCancelar'), fechar = el('#snX');
+  if(senhaObrigatoria){
+    tit.textContent = 'Defina sua senha';
+    el('#snQuem').innerHTML = usuario.email +
+      '<br><b style="color:var(--chama)">Este é seu primeiro acesso. ' +
+      'Escolha uma senha só sua antes de continuar.</b>';
+    cancelar.style.display = 'none';
+    fechar.style.display = 'none';
+  } else {
+    tit.textContent = 'Trocar minha senha';
+    cancelar.style.display = '';
+    fechar.style.display = '';
+  }
   el('#telaSenha').classList.add('ver');
   setTimeout(() => el('#snNova').focus(), 70);
+}
+
+function conferirSenhaProvisoria(){
+  if(!usuario || !perfil) return;
+  if(perfil.senha_provisoria === true){
+    ['#telaForm','#telaOk','#telaLista','#telaAcessos'].forEach(s => {
+      const t = el(s); if(t) t.classList.remove('ver');
+    });
+    abrirTrocaSenha(true);
+  }
 }
 
 async function salvarSenha(){
@@ -781,15 +836,25 @@ async function salvarSenha(){
   bt.disabled = false; bt.textContent = 'Salvar senha';
   if(r.error){ er.textContent = r.error.message; return; }
   a.value = ''; b.value = '';
+  if(perfil && perfil.senha_provisoria){
+    await sb.from('perfis').update({ senha_provisoria: false }).eq('user_id', usuario.id);
+    perfil.senha_provisoria = false;
+  }
+  senhaObrigatoria = false;
+  el('#snCancelar').style.display = '';
+  el('#snX').style.display = '';
   el('#telaSenha').classList.remove('ver');
-  recado('Senha alterada com sucesso.');
+  recado('Senha definida. Bem-vindo ao sistema.');
 }
 
-el('#snX').onclick = el('#snCancelar').onclick = () => el('#telaSenha').classList.remove('ver');
+el('#snX').onclick = el('#snCancelar').onclick = () => {
+  if(senhaObrigatoria) return;
+  el('#telaSenha').classList.remove('ver');
+};
 el('#snOk').onclick = salvarSenha;
 el('#telaSenha').addEventListener('keydown', e => {
   if(e.key === 'Enter') salvarSenha();
-  if(e.key === 'Escape') el('#telaSenha').classList.remove('ver');
+  if(e.key === 'Escape' && !senhaObrigatoria) el('#telaSenha').classList.remove('ver');
 });
 
 /* ---------- tema claro / escuro ---------- */
@@ -930,7 +995,7 @@ async function carregarPerfil(){
   perfil = null;
   if(!sb || !usuario) return;
   const r = await sb.from('perfis')
-    .select('nome,papel,setor,congregacao')
+    .select('nome,papel,setor,congregacao,senha_provisoria')
     .eq('user_id', usuario.id).maybeSingle();
   if(!r.error && r.data) perfil = r.data;
 }
@@ -1006,9 +1071,10 @@ function opcoesCongrAc(papel, setor, atual){
 async function abrirAcessos(){
   if(!ehSecretaria()){ recado('Acesso restrito à Secretaria Geral.'); return; }
   el('#telaAcessos').classList.add('ver');
+  if(el('#acFormNovo') && el('#acFormNovo').style.display === 'none') el('#acAbrirNovo').style.display = '';
   const cx = el('#acCorpo');
   cx.innerHTML = '<p class="vazio-lista">Carregando...</p>';
-  const r = await sb.from('perfis').select('user_id,nome,email,papel,setor,congregacao').order('nome');
+  const r = await sb.from('perfis').select('user_id,nome,email,papel,setor,congregacao,senha_provisoria').order('nome');
   if(r.error){ cx.innerHTML = '<p class="vazio-lista">Erro: ' + r.error.message + '</p>'; return; }
   let dados = r.data || [];
   if(!ehSistema()) dados = dados.filter(p => p.papel !== 'sistema');
@@ -1022,7 +1088,8 @@ async function abrirAcessos(){
       '<div class="ac-quem">' +
         '<input class="ac-nome" type="text" value="' + (p.nome || '').replace(/"/g, '&quot;') +
         '" placeholder="Nome completo">' +
-        '<span>' + (p.email || '') + '</span></div>' +
+        '<span>' + (p.email || '') +
+        (p.senha_provisoria ? ' <b class="ac-prov">senha provisória</b>' : '') + '</span></div>' +
       '<select class="ac-papel">' + opcoesPapel(p.papel) + '</select>' +
       '<select class="ac-setor">' + opcoesSetorAc(p.papel, p.setor) + '</select>' +
       '<select class="ac-congr">' + opcoesCongrAc(p.papel, p.setor, p.congregacao) + '</select>' +
@@ -1091,6 +1158,112 @@ async function abrirAcessos(){
     };
   });
 }
+
+
+/* ---------- criar acesso sem sair do sistema ---------- */
+let sbAux = null;
+
+function clienteAuxiliar(){
+  if(sbAux) return sbAux;
+  if(!window.supabase || !window.supabase.createClient) return null;
+  sbAux = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false, storageKey: 'ieadesga-aux' }
+  });
+  return sbAux;
+}
+
+function montarCamposNovo(){
+  const sp = el('#nvPapel'), ss = el('#nvSetor'), sc = el('#nvCongr');
+  sp.innerHTML = opcoesPapel('leitor');
+  function refaz(){
+    const p = sp.value;
+    const chefe = (p === 'admin' || p === 'sistema' || p === 'leitor');
+    ss.innerHTML = opcoesSetorAc(p, chefe ? '' : ss.value);
+    sc.innerHTML = opcoesCongrAc(p, chefe ? '' : ss.value, '');
+  }
+  sp.onchange = refaz;
+  ss.onchange = () => { sc.innerHTML = opcoesCongrAc(sp.value, ss.value, ''); };
+  refaz();
+}
+
+async function criarAcesso(){
+  const er = el('#nvErro'), bt = el('#nvCriar');
+  const nome = el('#nvNome').value.trim();
+  const email = el('#nvEmail').value.trim();
+  const senha = el('#nvSenha').value;
+  const papel = el('#nvPapel').value;
+  const setor = el('#nvSetor').value || null;
+  const congregacao = el('#nvCongr').value || null;
+
+  if(!nome){ er.textContent = 'Informe o nome completo.'; el('#nvNome').focus(); return; }
+  if(!email || email.indexOf('@') < 0){ er.textContent = 'Informe um e-mail válido.'; el('#nvEmail').focus(); return; }
+  if(senha.length < 6){ er.textContent = 'A senha provisória precisa ter ao menos 6 caracteres.'; el('#nvSenha').focus(); return; }
+  const precisaSetor = (papel === 'secretario' || papel === 'secretario_congr');
+  if(precisaSetor && !setor){ er.textContent = 'Este perfil precisa de um setor.'; return; }
+  if(papel === 'secretario_congr' && !congregacao){ er.textContent = 'Este perfil precisa de uma congregação.'; return; }
+
+  const aux = clienteAuxiliar();
+  if(!aux){ er.textContent = 'Sem conexão com o servidor.'; return; }
+
+  er.textContent = '';
+  bt.disabled = true; bt.textContent = 'Criando...';
+
+  const r = await aux.auth.signUp({
+    email: email, password: senha, options: { data: { nome: nome } }
+  });
+
+  if(r.error){
+    bt.disabled = false; bt.textContent = 'Criar acesso';
+    let m = r.error.message || 'erro desconhecido';
+    if(/already registered|already exists/i.test(m)) m = 'Já existe uma conta com este e-mail.';
+    er.textContent = m;
+    return;
+  }
+
+  const novoId = r.data && r.data.user ? r.data.user.id : null;
+  if(!novoId){
+    bt.disabled = false; bt.textContent = 'Criar acesso';
+    er.textContent = 'A conta foi criada, mas não recebi o identificador. Defina a função na lista abaixo.';
+    await abrirAcessos();
+    return;
+  }
+
+  // o perfil é criado por gatilho no banco; aguardar e então definir a função
+  let ok = false;
+  for(let t = 0; t < 5 && !ok; t++){
+    await new Promise(res => setTimeout(res, 400));
+    const u = await sb.from('perfis')
+      .update({ nome: nome, papel: papel, setor: setor, congregacao: congregacao,
+                senha_provisoria: true })
+      .eq('user_id', novoId).select('user_id');
+    if(!u.error && u.data && u.data.length) ok = true;
+  }
+
+  bt.disabled = false; bt.textContent = 'Criar acesso';
+
+  if(!ok){
+    er.textContent = 'Conta criada, mas não consegui definir a função. Ajuste na lista abaixo.';
+  } else {
+    recado('Acesso criado para <b>' + nome + '</b>. Informe o e-mail e a senha provisória.');
+    el('#nvNome').value = ''; el('#nvEmail').value = ''; el('#nvSenha').value = '';
+    el('#acFormNovo').style.display = 'none';
+    el('#acAbrirNovo').style.display = '';
+  }
+  await abrirAcessos();
+}
+
+el('#acAbrirNovo').onclick = () => {
+  el('#acFormNovo').style.display = '';
+  el('#acAbrirNovo').style.display = 'none';
+  el('#nvErro').textContent = '';
+  montarCamposNovo();
+  setTimeout(() => el('#nvNome').focus(), 60);
+};
+el('#nvCancelar').onclick = () => {
+  el('#acFormNovo').style.display = 'none';
+  el('#acAbrirNovo').style.display = '';
+};
+el('#nvCriar').onclick = criarAcesso;
 
 el('#acX').onclick = () => el('#telaAcessos').classList.remove('ver');
 
@@ -1876,6 +2049,7 @@ async function iniciar(){
   await carregarCongregacoes();
   if(usuario) marcarAtividade();
   pintarBarra();
+  conferirSenhaProvisoria();
   carregarNotas();
   contarSolicitacoes();
   sb.auth.onAuthStateChange(async function(_ev, sess){
