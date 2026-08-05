@@ -632,7 +632,7 @@ body[data-tema="dark"] .barra .onde{color:#8ea6b0}
     <span class="dica-prot" id="protDica">Digite o número que aparece no comprovante do pedido.</span>
   </div>
 
-  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v26 · 03.08.2026</span></p>
+  <p class="rodape">Assembleia de Deus no Rio Grande do Norte · São Gonçalo do Amarante<br><span style="opacity:.55">Portal v27 · 03.08.2026</span></p>
 </div>
 
 
@@ -1571,16 +1571,28 @@ function montarCamposDestino(tipo){
 
 function ajustarPorTipo(tipo){
   tipoAtual = tipo;
+  const ehCarta = (tipo === 'Carta de recomendação' || tipo === 'Carta de mudança');
   const bd = el('#blocoDestino');
-  bd.style.display = (tipo === 'Carta de recomendação') ? '' : 'none';
-  const det = el('#blocoDetalhe');
-  if(tipo === 'Carta de mudança'){
-    det.style.display = '';
-    el('#lbDetalhe').textContent = 'Congregação de destino';
-    el('#fmDetalhe').placeholder = 'Para onde a membresia será transferida';
-  } else {
-    det.style.display = 'none';
+  bd.style.display = ehCarta ? '' : 'none';
+
+  // trânsito só existe para a carta de recomendação
+  const opTransito = document.querySelector('input[name=dest][value=transito]');
+  if(opTransito){
+    const caixa = opTransito.closest('.opc');
+    const permite = (tipo === 'Carta de recomendação');
+    caixa.style.display = permite ? '' : 'none';
+    if(!permite && opTransito.checked){
+      opTransito.checked = false;
+      caixa.classList.remove('on');
+      el('#camposDestino').innerHTML = '';
+    }
   }
+
+  const rot = bd.querySelector('label');
+  if(rot) rot.textContent = (tipo === 'Carta de mudança')
+    ? 'A transferência é para *' : 'A carta é para *';
+
+  el('#blocoDetalhe').style.display = 'none';
 }
 
 function abrirForm(tipo){
@@ -1642,7 +1654,7 @@ async function enviarSolicitacao(){
     observacoes: valor('#fmObs') || null
   };
 
-  if(tipoAtual === 'Carta de recomendação'){
+  if(tipoAtual === 'Carta de recomendação' || tipoAtual === 'Carta de mudança'){
     const marcado = document.querySelector('input[name=dest]:checked');
     if(!marcado){ er.textContent = 'Marque para onde a carta se destina.'; return; }
     linha.destino_tipo = marcado.value;
@@ -1736,7 +1748,9 @@ function linhaAutor(s){
 }
 
 function textoDestino(s){
-  if(s.tipo === 'Carta de recomendação'){
+  if(s.tipo === 'Carta de recomendação' || s.tipo === 'Carta de mudança'){
+    if(!s.destino_tipo && s.tipo === 'Carta de mudança' && s.detalhe)
+      return 'Destino: ' + s.detalhe;
     switch(s.destino_tipo){
       case 'campo':
         return 'Destino: ' + (s.destino_congregacao || '—') + ' \u00b7 mesmo campo';
@@ -1753,7 +1767,6 @@ function textoDestino(s){
         return '';
     }
   }
-  if(s.tipo === 'Carta de mudança' && s.detalhe) return 'Destino: ' + s.detalhe;
   return '';
 }
 
